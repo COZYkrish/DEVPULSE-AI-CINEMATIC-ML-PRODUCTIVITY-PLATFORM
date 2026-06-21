@@ -157,9 +157,17 @@ const ShapeBlur: React.FC<ShapeBlurProps> = ({
     if (!mount) return;
 
     let active = true;
+    let isVisible = false;
     let animationFrameId: number;
     let time = 0,
       lastTime = 0;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.length > 0) {
+        isVisible = entries[0].isIntersecting;
+      }
+    }, { threshold: 0 });
+    observer.observe(mount);
 
     const vMouse = new THREE.Vector2();
     const vMouseDamp = new THREE.Vector2();
@@ -236,15 +244,21 @@ const ShapeBlur: React.FC<ShapeBlurProps> = ({
 
     const update = () => {
       if (!active) return;
-      time = performance.now() * 0.001;
-      const dt = time - lastTime;
-      lastTime = time;
+      
+      if (isVisible) {
+        time = performance.now() * 0.001;
+        const dt = time - lastTime;
+        lastTime = time;
 
-      (['x', 'y'] as const).forEach(k => {
-        vMouseDamp[k] = THREE.MathUtils.damp(vMouseDamp[k], vMouse[k], 8, dt);
-      });
+        (['x', 'y'] as const).forEach(k => {
+          vMouseDamp[k] = THREE.MathUtils.damp(vMouseDamp[k], vMouse[k], 8, dt);
+        });
 
-      renderer.render(scene, camera);
+        renderer.render(scene, camera);
+      } else {
+        lastTime = performance.now() * 0.001;
+      }
+      
       animationFrameId = requestAnimationFrame(update);
     };
     update();
@@ -255,6 +269,7 @@ const ShapeBlur: React.FC<ShapeBlurProps> = ({
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', resize);
       ro.disconnect();
+      observer.disconnect();
       document.removeEventListener('mousemove', onPointerMove);
       document.removeEventListener('pointermove', onPointerMove);
       if (mount.contains(renderer.domElement)) {

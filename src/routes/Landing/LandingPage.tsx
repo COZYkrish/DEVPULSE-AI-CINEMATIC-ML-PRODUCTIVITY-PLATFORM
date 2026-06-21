@@ -5,6 +5,7 @@ import { Code2, Moon, GitCommit, Activity } from 'lucide-react';
 import SceneContainer from '@/components/3d/SceneContainer';
 import HlsVideo from '@/components/ui/HlsVideo';
 import BlurText from '@/components/animations/BlurText';
+import ShapeBlur from '@/components/animations/ShapeBlur';
 import 'iconify-icon';
 
 /* ============================================ */
@@ -68,11 +69,14 @@ function FeatureRow({ icon: Icon, title, description, delay }: {
 }) {
   return (
     <SectionReveal delay={delay}>
-      <div className="liquid-glass flex items-start gap-6 p-6 mb-4 hover:-translate-y-1 transition-transform duration-300">
-        <div className="w-12 h-12 flex items-center justify-center shrink-0 border border-white/20 rounded-full bg-white/5">
+      <div className="relative liquid-glass flex items-start gap-6 p-6 mb-4 hover:-translate-y-1 transition-transform duration-300 overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-80 mix-blend-screen pointer-events-none">
+          <ShapeBlur variation={0} shapeSize={2.0} roundness={0.8} borderSize={0.04} circleSize={0.4} circleEdge={1.0} />
+        </div>
+        <div className="relative z-10 w-12 h-12 flex items-center justify-center shrink-0 border border-white/20 rounded-full bg-white/5">
           <Icon className="w-5 h-5 text-white" />
         </div>
-        <div>
+        <div className="relative z-10">
           <h3 className="text-2xl mb-1 tracking-tight" style={{ fontFamily: 'Instrument Serif, serif' }}>
             {title}
           </h3>
@@ -211,8 +215,11 @@ export default function LandingPage() {
             />
           </div>
 
-          <div className="liquid-glass-strong rounded-3xl p-8 sm:p-12">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 divide-x divide-white/10">
+          <div className="relative liquid-glass-strong rounded-3xl p-8 sm:p-12 overflow-hidden">
+            <div className="absolute inset-0 z-0 opacity-80 mix-blend-screen pointer-events-none">
+              <ShapeBlur variation={0} shapeSize={2.0} roundness={0.2} borderSize={0.02} circleSize={0.6} circleEdge={1.0} />
+            </div>
+            <div className="relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-8 divide-x divide-white/10">
               {[
                 { label: 'Dataset Records', value: 501 },
                 { label: 'Feature Dimensions', value: 8 },
@@ -237,8 +244,61 @@ export default function LandingPage() {
       {/* SCENE 4 — THE ORACLE (AI Core)               */}
       {/* ============================================ */}
       <section className="relative min-h-[100vh] flex items-center py-32">
-        <div className="container relative z-10">
-          <div className="max-w-xl ml-auto">
+        <div className="container relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          
+          {/* LEFT SIDE CONTENT: Engine Status Dashboard */}
+          <div className="hidden lg:flex flex-col justify-center relative">
+            <SectionReveal delay={0.2}>
+              <div className="liquid-glass-strong rounded-3xl p-8 max-w-sm mx-auto w-full">
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+                    {/* @ts-ignore */}
+                    <iconify-icon icon="solar:cpu-bolt-linear" width="24" height="24"></iconify-icon>
+                  </div>
+                  <div>
+                    <div className="text-sm text-white/60 font-light" style={{ fontFamily: 'Barlow, sans-serif' }}>Engine Status</div>
+                    <div className="text-xl italic" style={{ fontFamily: 'Instrument Serif, serif' }}>Online & Optimal</div>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex justify-between text-sm mb-2" style={{ fontFamily: 'Barlow, sans-serif' }}>
+                      <span className="text-white/60">Processing Latency</span>
+                      <span className="text-white">12ms</span>
+                    </div>
+                    <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full bg-white w-1/4 rounded-full" />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <div className="flex justify-between text-sm mb-2" style={{ fontFamily: 'Barlow, sans-serif' }}>
+                      <span className="text-white/60">Model Accuracy</span>
+                      <span className="text-white">98.4%</span>
+                    </div>
+                    <div className="h-1 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full bg-white w-[98%] rounded-full" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8 pt-8 border-t border-white/10">
+                  <div className="flex justify-between items-end">
+                    <div>
+                      <div className="text-sm text-white/60 font-light mb-1" style={{ fontFamily: 'Barlow, sans-serif' }}>Active Nodes</div>
+                      <div className="text-4xl italic" style={{ fontFamily: 'Instrument Serif, serif' }}>1,024</div>
+                    </div>
+                    {/* @ts-ignore */}
+                    <iconify-icon icon="solar:chart-square-linear" width="32" height="32" className="text-white/40"></iconify-icon>
+                  </div>
+                </div>
+              </div>
+            </SectionReveal>
+          </div>
+
+          {/* RIGHT SIDE CONTENT: Existing Inference Models */}
+          <div className="max-w-xl lg:ml-auto">
             <SectionReveal>
               <div className="liquid-glass inline-flex rounded-full px-4 py-1.5 mb-6">
                 <span className="text-sm font-light text-white/80 uppercase tracking-widest" style={{ fontFamily: 'Barlow, sans-serif' }}>Scene 04: The Oracle</span>
@@ -263,13 +323,16 @@ export default function LandingPage() {
                 { name: 'Logistic Regression', desc: 'Linear Baseline', active: false },
               ].map((model, i) => (
                 <SectionReveal key={model.name} delay={i * 0.1}>
-                  <div className={`liquid-glass rounded-2xl p-6 flex items-center justify-between ${model.active ? 'bg-white/10' : ''}`}>
-                    <div>
+                  <div className={`relative liquid-glass rounded-2xl p-6 flex items-center justify-between overflow-hidden ${model.active ? 'bg-white/10' : ''}`}>
+                    <div className="absolute inset-0 z-0 opacity-80 mix-blend-screen pointer-events-none">
+                      <ShapeBlur variation={0} shapeSize={2.0} roundness={0.8} borderSize={0.04} circleSize={0.4} circleEdge={1.0} />
+                    </div>
+                    <div className="relative z-10">
                       <div className="text-2xl italic tracking-tight" style={{ fontFamily: 'Instrument Serif, serif' }}>{model.name}</div>
                       <div className="text-sm text-white/60 mt-1 font-light" style={{ fontFamily: 'Barlow, sans-serif' }}>{model.desc}</div>
                     </div>
                     {model.active && (
-                      <div className="w-3 h-3 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]" />
+                      <div className="relative z-10 w-3 h-3 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]" />
                     )}
                   </div>
                 </SectionReveal>

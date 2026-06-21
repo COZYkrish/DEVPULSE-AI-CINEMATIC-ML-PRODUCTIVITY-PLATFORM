@@ -286,7 +286,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 z-0 pointer-events-none">
           <HlsVideo src="https://stream.mux.com/8wrHPCX2dC3msyYU9ObwqNdm00u3ViXvOSHUMRYSEe5Q.m3u8" className="w-full h-full object-cover" />
           <div className="absolute top-0 left-0 right-0 h-[200px] bg-gradient-to-b from-black to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-transparent to-black" />
+          <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-black to-transparent" />
         </div>
 
         <div className="container relative z-10 text-center flex flex-col items-center">

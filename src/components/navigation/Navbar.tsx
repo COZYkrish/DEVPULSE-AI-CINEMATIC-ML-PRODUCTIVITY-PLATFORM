@@ -50,14 +50,14 @@ export default function Navbar() {
             className={cn(
               'flex items-center justify-between px-4 sm:px-6 py-3 transition-all duration-500',
               isScrolled || !isLanding
-                ? 'border border-white/20 bg-black/80 backdrop-blur-md shadow-lg shadow-black/20'
+                ? 'rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]'
                 : 'bg-transparent'
             )}
           >
             {/* Logo */}
             <Link to="/" className="flex items-center gap-4 group">
-              <div className="relative w-10 h-10 border border-white flex items-center justify-center bg-white/5 transition-colors group-hover:bg-white">
-                <Zap className="w-5 h-5 text-white group-hover:text-black transition-colors" strokeWidth={2} />
+              <div className="relative w-10 h-10 rounded-full border border-white/20 flex items-center justify-center bg-white/5 transition-colors group-hover:bg-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]">
+                <Zap className="w-5 h-5 text-white group-hover:text-white transition-colors" strokeWidth={2} />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-light tracking-widest uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#FFFFFF' }}>
@@ -79,7 +79,7 @@ export default function Navbar() {
                     key={link.path}
                     to={link.path}
                     className={cn(
-                      'relative flex items-center gap-2 px-3 py-2 text-[10px] uppercase tracking-widest transition-all duration-300 font-bold',
+                      'relative flex items-center gap-2 px-4 py-2 rounded-full text-[10px] uppercase tracking-widest transition-all duration-300 font-bold',
                       isActive
                         ? 'text-white'
                         : 'text-gray-500 hover:text-white'
@@ -91,8 +91,7 @@ export default function Navbar() {
                     {isActive && (
                       <motion.div
                         layoutId="navbar-indicator"
-                        className="absolute inset-0 -z-10"
-                        style={{ borderBottom: '1px solid #FFFFFF' }}
+                        className="absolute inset-0 rounded-full -z-10 bg-white/10 border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]"
                         transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -105,7 +104,7 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <Link
                 to="/dashboard"
-                className="hidden sm:flex items-center gap-2 px-4 py-2 border border-white bg-white text-black text-[10px] uppercase tracking-widest font-bold transition-all duration-300 hover:bg-black hover:text-white"
+                className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-[10px] uppercase tracking-widest font-bold transition-all duration-300 hover:bg-white hover:text-black shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]"
                 style={{ fontFamily: 'JetBrains Mono' }}
               >
                 <Zap className="w-3.5 h-3.5" />
@@ -114,7 +113,7 @@ export default function Navbar() {
 
               <button
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="lg:hidden p-2 transition-colors border border-white/20 hover:bg-white/10"
+                className="lg:hidden p-2 rounded-full transition-colors border border-white/20 bg-white/5 hover:bg-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]"
                 style={{ color: '#FFFFFF' }}
               >
                 {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

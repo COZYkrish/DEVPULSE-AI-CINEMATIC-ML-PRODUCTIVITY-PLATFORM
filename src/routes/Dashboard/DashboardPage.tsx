@@ -1,5 +1,5 @@
 import { useEffect, useCallback, Suspense, useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Zap, Save, RotateCcw, TrendingUp, AlertTriangle, CheckCircle, XCircle, Shield, Brain, Moon, Coffee, Code2, GitCommit, Bug, Activity, Bell, BellOff, Sparkles, GitBranch, Trophy } from 'lucide-react';
 import { usePredictionStore } from '@/store/predictionStore';
 import { usePredictionEngine } from '@/hooks/usePredictionEngine';
@@ -20,7 +20,7 @@ function getIcon(name: string) {
 /* ============================================ */
 /* Gauge Component                               */
 /* ============================================ */
-function CircularGauge({ value, size = 140, strokeWidth = 8, color, label }: {
+function CircularGauge({ value, size = 140, strokeWidth = 2, color, label }: {
   value: number; size?: number; strokeWidth?: number; color: string; label: string;
 }) {
   const radius = (size - strokeWidth) / 2;
@@ -37,7 +37,6 @@ function CircularGauge({ value, size = 140, strokeWidth = 8, color, label }: {
         <motion.circle
           cx={size / 2} cy={size / 2} r={radius}
           stroke={color} strokeWidth={strokeWidth} fill="none"
-          strokeLinecap="round"
           initial={{ strokeDashoffset: circumference } as any}
           animate={{ strokeDashoffset: offset } as any}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
@@ -46,10 +45,10 @@ function CircularGauge({ value, size = 140, strokeWidth = 8, color, label }: {
         />
       </svg>
       <div className="absolute flex flex-col items-center justify-center" style={{ width: size, height: size }}>
-        <span className="text-3xl font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color }}>
+        <span className="text-4xl font-light tracking-tighter" style={{ fontFamily: 'JetBrains Mono, monospace', color }}>
           {Math.round(value)}
         </span>
-        <span className="text-[10px] mt-1" style={{ color: '#64748B', fontFamily: 'JetBrains Mono, monospace' }}>
+        <span className="text-[10px] mt-1 tracking-widest uppercase" style={{ color: '#888888', fontFamily: 'JetBrains Mono, monospace' }}>
           {label}
         </span>
       </div>
@@ -64,16 +63,16 @@ function MetricCard({ label, value, suffix = '', icon: Icon, color, description 
   label: string; value: number | string; suffix?: string; icon: React.ComponentType<{ className?: string, style?: React.CSSProperties }>; color: string; description?: string;
 }) {
   return (
-    <div className="glass rounded-xl p-4 card-hover">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium" style={{ color: '#94A3B8' }}>{label}</span>
-        <Icon className="w-4 h-4" style={{ color: color }} />
+    <div className="p-4 border border-white/20 bg-black hover:bg-white/5 transition-colors group">
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-[10px] tracking-widest uppercase" style={{ color: '#888888', fontFamily: 'JetBrains Mono, monospace' }}>{label}</span>
+        <Icon className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" style={{ color: color }} />
       </div>
-      <div className="text-2xl font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color }}>
-        {typeof value === 'number' ? value.toFixed(1) : value}{suffix}
+      <div className="text-2xl font-light" style={{ fontFamily: 'JetBrains Mono, monospace', color }}>
+        {typeof value === 'number' ? value.toFixed(1) : value}<span className="text-sm ml-1 text-white/50">{suffix}</span>
       </div>
       {description && (
-        <p className="text-[10px] mt-1" style={{ color: '#64748B' }}>{description}</p>
+        <p className="text-[10px] mt-2 text-white/40">{description}</p>
       )}
     </div>
   );
@@ -89,13 +88,13 @@ function InputSlider({ feature, value, onChange }: {
   const percentage = ((value - feature.min) / (feature.max - feature.min)) * 100;
 
   return (
-    <div className="glass rounded-xl p-4 group card-hover">
+    <div className="p-4 border border-white/10 bg-black/40 hover:bg-white/5 transition-colors">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <Icon className="w-4 h-4" style={{ color: '#00E5FF' } as React.CSSProperties} />
-          <span className="text-xs font-medium" style={{ color: '#94A3B8' }}>{feature.label}</span>
+          <Icon className="w-4 h-4 text-white" />
+          <span className="text-[10px] tracking-widest uppercase text-gray-400" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{feature.label}</span>
         </div>
-        <span className="text-sm font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#F1F5F9' }}>
+        <span className="text-sm font-bold text-white" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
           {Number.isInteger(feature.step) ? value : value.toFixed(1)}{feature.unit}
         </span>
       </div>
@@ -108,14 +107,15 @@ function InputSlider({ feature, value, onChange }: {
           step={feature.step}
           value={value}
           onChange={(e) => onChange(parseFloat(e.target.value))}
-          className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+          className="w-full h-px appearance-none cursor-pointer bg-white/10"
           style={{
-            background: `linear-gradient(to right, #00E5FF ${percentage}%, rgba(255,255,255,0.1) ${percentage}%)`,
+            backgroundImage: `linear-gradient(to right, #ffffff ${percentage}%, transparent ${percentage}%)`,
           }}
         />
+        {/* Custom thumb styles are needed via CSS but we approximate with default for now */}
       </div>
 
-      <p className="text-[10px] mt-2" style={{ color: '#64748B' }}>{feature.description}</p>
+      <p className="text-[10px] mt-2 text-gray-600" style={{ fontFamily: 'Inter, sans-serif' }}>{feature.description}</p>
     </div>
   );
 }
@@ -134,7 +134,7 @@ export default function DashboardPage() {
       hasRunInitial.current = true;
       runPrediction();
     }
-  }, []);
+  }, [runPrediction]);
 
   const handleInputChange = useCallback(
     (key: keyof PredictionInput, value: number) => {
@@ -160,68 +160,65 @@ export default function DashboardPage() {
   }, [result, savePrediction]);
 
   const prob = result?.successProbability ?? 0;
-  const probColor = prob >= 0.7 ? '#10B981' : prob >= 0.4 ? '#F59E0B' : '#EF4444';
+  // Monochromatic scale: White for high prob, dark gray for low.
+  const probColor = prob >= 0.7 ? '#FFFFFF' : prob >= 0.4 ? '#AAAAAA' : '#555555';
 
   return (
     <PageTransition>
-      <div className="min-h-screen pt-24 pb-32 overflow-hidden">
-        <div className="container">
+      <div className="min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
+        <div className="vignette-overlay" />
+        <div className="noise-overlay" />
+        <div className="film-lines" />
+        
+        <div className="container relative z-10">
           {/* Header */}
-          <div className="text-center mb-10">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
+          <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-white/20 pb-6">
+            <div>
+              <div className="text-[10px] tracking-widest text-gray-500 mb-2 uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                // Operation: Inference
+              </div>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-4xl font-light uppercase tracking-widest"
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+              >
+                Command Center
+              </motion.h1>
+            </div>
+            
+            {/* Preset Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-3xl sm:text-4xl font-bold mb-2"
-              style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}
+              transition={{ delay: 0.3 }}
+              className="flex items-center gap-2 mt-6 md:mt-0"
             >
-              AI Command Center
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-sm"
-              style={{ color: '#94A3B8' }}
-            >
-              Adjust parameters and watch predictions update in real-time
-            </motion.p>
+              <span className="text-[10px] uppercase tracking-widest text-gray-500 mr-2" style={{ fontFamily: 'JetBrains Mono, monospace' }}>Presets:</span>
+              {Object.keys(PRESETS).map((name) => (
+                <button
+                  key={name}
+                  onClick={() => handlePreset(name)}
+                  className="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+                  style={{ fontFamily: 'JetBrains Mono, monospace' }}
+                >
+                  {name}
+                </button>
+              ))}
+            </motion.div>
           </div>
 
-          {/* Preset Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-wrap items-center justify-center gap-2 mb-8"
-          >
-            <span className="text-xs mr-2" style={{ color: '#64748B' }}>Presets:</span>
-            {Object.keys(PRESETS).map((name) => (
-              <button
-                key={name}
-                onClick={() => handlePreset(name)}
-                className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 hover:scale-105"
-                style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  color: '#94A3B8',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                }}
-              >
-                {name}
-              </button>
-            ))}
-          </motion.div>
-
           {/* Main 3-Column Layout */}
-          <div className="grid lg:grid-cols-3 gap-6">
+          <div className="grid lg:grid-cols-3 gap-8">
             {/* LEFT: Input Controls */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="space-y-3"
+              className="space-y-2"
             >
-              <h2 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: '#94A3B8', fontFamily: 'Space Grotesk, sans-serif' }}>
-                <Activity className="w-4 h-4" style={{ color: '#00E5FF' }} />
+              <h2 className="text-[10px] uppercase tracking-widest mb-4 flex items-center gap-2 text-gray-400" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                <Activity className="w-3 h-3 text-white" />
                 Input Parameters
               </h2>
               {FEATURES.map((feature) => (
@@ -236,29 +233,31 @@ export default function DashboardPage() {
 
             {/* CENTER: 3D AI Core */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, duration: 0.6 }}
-              className="flex flex-col items-center gap-6"
+              className="flex flex-col gap-6"
             >
               {/* 3D Visualization */}
-              <div className="relative w-full aspect-square max-w-[320px] rounded-3xl overflow-hidden"
-                style={{ border: '1px solid rgba(255,255,255,0.05)' }}
-              >
+              <div className="relative w-full aspect-square border border-white/20 bg-black overflow-hidden group">
                 <Suspense fallback={null}>
-                  <SceneContainer variant="core" />
+                  <SceneContainer isFixedScroll={false} />
                 </Suspense>
-                <div className="absolute inset-0 pointer-events-none" style={{
-                  background: 'radial-gradient(ellipse at center, transparent 40%, #050816 100%)',
-                }} />
+                <div className="scan-line" />
+                
+                {/* HUD Corners */}
+                <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-white/50 m-2" />
+                <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-white/50 m-2" />
+                <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-white/50 m-2" />
+                <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/50 m-2" />
                 
                 {/* Overlay status */}
                 <div className="absolute bottom-4 left-4 right-4">
-                  <div className="glass rounded-xl p-3 text-center">
-                    <div className="text-[10px] mb-1" style={{ color: '#64748B', fontFamily: 'JetBrains Mono, monospace' }}>
+                  <div className="border border-white/10 bg-black/60 backdrop-blur-md p-3 text-center">
+                    <div className="text-[10px] tracking-widest uppercase mb-1" style={{ color: '#888888', fontFamily: 'JetBrains Mono, monospace' }}>
                       {isLoading ? 'PROCESSING...' : 'PREDICTION ENGINE'}
                     </div>
-                    <div className="text-2xl font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color: probColor }}>
+                    <div className="text-2xl font-light" style={{ fontFamily: 'JetBrains Mono, monospace', color: probColor }}>
                       {(prob * 100).toFixed(1)}%
                     </div>
                   </div>
@@ -266,28 +265,28 @@ export default function DashboardPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={() => runPrediction()}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all hover:scale-105"
-                  style={{ background: 'linear-gradient(135deg, #00E5FF, #22D3EE)', color: '#050816' }}
+                  className="flex items-center justify-center gap-2 p-3 border border-white bg-white text-black text-[10px] uppercase tracking-widest font-bold hover:bg-transparent hover:text-white transition-colors"
+                  style={{ fontFamily: 'JetBrains Mono, monospace' }}
                 >
-                  <Zap className="w-4 h-4" /> Predict
+                  <Zap className="w-3 h-3" /> Execute
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={!result}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all hover:scale-105 disabled:opacity-40"
-                  style={{ background: 'rgba(255,255,255,0.06)', color: '#94A3B8', border: '1px solid rgba(255,255,255,0.1)' }}
+                  className="flex items-center justify-center gap-2 p-3 border border-white/20 text-[10px] uppercase tracking-widest hover:bg-white/10 transition-colors disabled:opacity-40"
+                  style={{ fontFamily: 'JetBrains Mono, monospace' }}
                 >
-                  <Save className="w-4 h-4" /> Save
+                  <Save className="w-3 h-3" /> Log
                 </button>
                 <button
                   onClick={() => handlePreset('Balanced')}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all hover:scale-105"
-                  style={{ background: 'rgba(255,255,255,0.06)', color: '#94A3B8', border: '1px solid rgba(255,255,255,0.1)' }}
+                  className="flex items-center justify-center gap-2 p-3 border border-white/20 text-[10px] uppercase tracking-widest hover:bg-white/10 transition-colors"
+                  style={{ fontFamily: 'JetBrains Mono, monospace' }}
                 >
-                  <RotateCcw className="w-4 h-4" /> Reset
+                  <RotateCcw className="w-3 h-3" /> Reset
                 </button>
               </div>
             </motion.div>
@@ -297,94 +296,92 @@ export default function DashboardPage() {
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="space-y-4"
+              className="space-y-6"
             >
-              <h2 className="text-sm font-semibold mb-4 flex items-center gap-2" style={{ color: '#94A3B8', fontFamily: 'Space Grotesk, sans-serif' }}>
-                <TrendingUp className="w-4 h-4" style={{ color: '#00E5FF' }} />
-                Prediction Results
+              <h2 className="text-[10px] uppercase tracking-widest mb-4 flex items-center gap-2 text-gray-400" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                <TrendingUp className="w-3 h-3 text-white" />
+                Output Vectors
               </h2>
 
               {/* Success Probability Gauge */}
-              <div className="glass rounded-2xl p-6 flex flex-col items-center">
-                <div className="relative">
+              <div className="border border-white/20 bg-black/50 p-8 flex flex-col items-center relative overflow-hidden">
+                <div className="absolute inset-0 grid-pattern opacity-20" />
+                <div className="relative z-10">
                   <CircularGauge
                     value={prob * 100}
                     color={probColor}
-                    label="SUCCESS %"
+                    label="SUCCESS PROBABILITY"
                     size={160}
+                    strokeWidth={1}
                   />
                 </div>
-                <div className="mt-4 flex items-center gap-2">
+                <div className="mt-6 flex items-center gap-2 relative z-10">
                   {result?.isSuccess ? (
-                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
-                      style={{ background: 'rgba(16,185,129,0.15)', color: '#10B981' }}>
-                      <CheckCircle className="w-3.5 h-3.5" /> SUCCESS
+                    <span className="flex items-center gap-2 px-4 py-1.5 border border-white bg-white/10 text-[10px] uppercase tracking-widest font-bold">
+                      <CheckCircle className="w-3 h-3" /> Target Acquired
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
-                      style={{ background: 'rgba(239,68,68,0.15)', color: '#EF4444' }}>
-                      <XCircle className="w-3.5 h-3.5" /> AT RISK
+                    <span className="flex items-center gap-2 px-4 py-1.5 border border-white/40 bg-black text-[10px] uppercase tracking-widest font-bold text-gray-400">
+                      <XCircle className="w-3 h-3" /> At Risk
                     </span>
                   )}
                 </div>
               </div>
 
               {/* Metrics Grid */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <MetricCard
                   label="Confidence"
                   value={((result?.confidenceScore ?? 0) * 100)}
                   suffix="%"
                   icon={Shield}
-                  color="#22D3EE"
+                  color="#FFFFFF"
                 />
                 <MetricCard
                   label="Productivity"
                   value={result?.productivityScore ?? 0}
                   suffix="/100"
                   icon={TrendingUp}
-                  color="#10B981"
+                  color="#FFFFFF"
                 />
                 <MetricCard
                   label="Burnout Risk"
                   value={result?.burnoutRisk ?? 0}
                   suffix="%"
                   icon={AlertTriangle}
-                  color={(result?.burnoutRisk ?? 0) > 50 ? '#EF4444' : '#F59E0B'}
+                  color={(result?.burnoutRisk ?? 0) > 50 ? '#FFFFFF' : '#AAAAAA'}
                 />
                 <MetricCard
                   label="Focus Score"
                   value={Math.max(0, 100 - (inputs.distractions * 10 + inputs.cognitive_load * 5))}
                   suffix="/100"
                   icon={Brain}
-                  color="#7C3AED"
+                  color="#FFFFFF"
                 />
               </div>
 
               {/* Recommendations */}
               {result?.recommendations && result.recommendations.length > 0 && (
-                <div className="glass rounded-2xl p-4">
-                  <h3 className="text-xs font-semibold mb-3 flex items-center gap-2" style={{ color: '#94A3B8' }}>
-                    <Sparkles className="w-3.5 h-3.5" style={{ color: '#F59E0B' }} />
-                    AI Recommendations
+                <div className="border border-white/20 bg-black p-4">
+                  <h3 className="text-[10px] uppercase tracking-widest mb-4 flex items-center gap-2 text-gray-400" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                    <Sparkles className="w-3 h-3 text-white" />
+                    System Directives
                   </h3>
                   <div className="space-y-2">
                     {result.recommendations.slice(0, 4).map((rec, i) => {
                       const RecIcon = getIcon(rec.icon);
-                      const priorityColors: Record<string, string> = { high: '#EF4444', medium: '#F59E0B', low: '#10B981' };
                       return (
                         <motion.div
                           key={i}
                           initial={{ opacity: 0, x: 10 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.1 }}
-                          className="flex gap-3 p-2.5 rounded-lg"
-                          style={{ background: 'rgba(255,255,255,0.03)' }}
+                          className="flex gap-3 p-3 border border-white/10 hover:border-white/30 transition-colors"
                         >
-                          <RecIcon className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: priorityColors[rec.priority] || '#94A3B8' }} />
+                          <RecIcon className="w-4 h-4 mt-0.5 flex-shrink-0 text-white" />
                           <div>
-                            <div className="text-xs font-medium" style={{ color: '#F1F5F9' }}>{rec.title}</div>
-                            <div className="text-[10px] mt-0.5 leading-relaxed" style={{ color: '#64748B' }}>{rec.description}</div>
+                            <div className="text-[10px] font-bold uppercase tracking-widest text-white mb-1" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{rec.title}</div>
+                            <div className="text-[10px] text-gray-500 leading-relaxed font-sans">{rec.description}</div>
                           </div>
                         </motion.div>
                       );

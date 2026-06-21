@@ -1,7 +1,7 @@
 import { useMemo, Suspense, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Trophy, Crown, Target, Shield, Crosshair, BarChart3 } from 'lucide-react';
-import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, LineChart, Line } from 'recharts';
+import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 import PageTransition from '@/components/animations/PageTransition';
 import SceneContainer from '@/components/3d/SceneContainer';
 
@@ -18,10 +18,11 @@ function RevealSection({ children, className = '', delay = 0 }: { children: Reac
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="glass rounded-lg p-3 text-xs shadow-xl" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
-      <p style={{ color: '#F1F5F9', fontFamily: 'Space Grotesk, sans-serif', fontWeight: 600 }}>{label}</p>
+    <div className="bg-black/90 p-3 text-[10px] shadow-xl backdrop-blur-md uppercase tracking-widest" style={{ border: '1px solid rgba(255,255,255,0.2)' }}>
+      <p style={{ color: '#FFFFFF', fontFamily: 'Space Grotesk, sans-serif', fontWeight: 600 }}>{label}</p>
+      <div className="w-full h-px bg-white/20 my-2" />
       {payload.map((entry: any, i: number) => (
-        <p key={i} style={{ color: entry.color || '#94A3B8', fontFamily: 'JetBrains Mono, monospace' }}>
+        <p key={i} style={{ color: entry.color || '#AAAAAA', fontFamily: 'JetBrains Mono, monospace' }}>
           {entry.name}: {typeof entry.value === 'number' ? (entry.value * 100).toFixed(1) + '%' : entry.value}
         </p>
       ))}
@@ -38,7 +39,7 @@ const models = [
     f1: 0.92,
     rocAuc: 0.96,
     isBest: true,
-    color: '#00E5FF',
+    color: '#FFFFFF',
     description: 'Gradient boosted trees with regularization. Top performer on this dataset.',
     icon: Crown,
   },
@@ -50,7 +51,7 @@ const models = [
     f1: 0.89,
     rocAuc: 0.94,
     isBest: false,
-    color: '#10B981',
+    color: '#CCCCCC',
     description: 'Ensemble of decision trees with bagging. Strong generalization.',
     icon: Shield,
   },
@@ -62,7 +63,7 @@ const models = [
     f1: 0.82,
     rocAuc: 0.82,
     isBest: false,
-    color: '#F59E0B',
+    color: '#999999',
     description: 'Single tree classifier. Highly interpretable but lower accuracy.',
     icon: Target,
   },
@@ -74,7 +75,7 @@ const models = [
     f1: 0.78,
     rocAuc: 0.85,
     isBest: false,
-    color: '#7C3AED',
+    color: '#666666',
     description: 'Linear baseline model. Fast inference, interpretable coefficients.',
     icon: Crosshair,
   },
@@ -101,74 +102,80 @@ export default function ModelArenaPage() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen pt-24 pb-32 overflow-hidden">
-        <div className="container">
+      <div className="min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
+        <div className="vignette-overlay" />
+        <div className="noise-overlay" />
+        <div className="film-lines" />
+
+        <div className="container relative z-10">
           {/* Hero */}
-          <div className="relative h-52 rounded-3xl overflow-hidden mb-12" style={{ border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div className="relative h-64 overflow-hidden mb-12 border border-white/20 bg-black">
             <Suspense fallback={null}>
-              <SceneContainer variant="minimal" />
+              <SceneContainer isFixedScroll={false} />
             </Suspense>
-            <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'radial-gradient(ellipse, rgba(5,8,22,0.5), rgba(5,8,22,0.9))' }}>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
               <div className="text-center">
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
-                  className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4"
-                  style={{ background: 'linear-gradient(135deg, rgba(0,229,255,0.2), rgba(124,58,237,0.2))', border: '1px solid rgba(0,229,255,0.2)' }}>
-                  <Trophy className="w-7 h-7" style={{ color: '#00E5FF' }} />
+                  className="inline-flex items-center justify-center w-14 h-14 border border-white/20 bg-white/5 mb-4">
+                  <Trophy className="w-6 h-6 text-white" />
                 </motion.div>
                 <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl sm:text-4xl font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
+                  className="text-4xl sm:text-5xl font-light uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                   Model Arena
                 </motion.h1>
                 <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-                  className="text-sm mt-2" style={{ color: '#94A3B8' }}>
+                  className="text-[10px] mt-4 uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>
                   Four models compete. One emerges as champion.
                 </motion.p>
               </div>
             </div>
+            <div className="scan-line" />
           </div>
 
           {/* Model Cards */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {models.map((model, i) => {
               const Icon = model.icon;
               return (
                 <RevealSection key={model.name} delay={i * 0.1}>
-                  <div className={`glass rounded-2xl p-5 card-hover relative overflow-hidden ${model.isBest ? 'glow-primary' : ''}`}>
+                  <div className="border border-white/20 bg-black/60 p-6 hover:bg-white/5 transition-colors relative overflow-hidden group">
+                    <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
                     {model.isBest && (
-                      <div className="absolute top-3 right-3">
-                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'rgba(0,229,255,0.15)', color: '#00E5FF', fontFamily: 'JetBrains Mono' }}>
+                      <div className="absolute top-4 right-4">
+                        <span className="text-[10px] font-bold px-2 py-1 border border-white bg-white text-black uppercase tracking-widest" style={{ fontFamily: 'JetBrains Mono' }}>
                           CHAMPION
                         </span>
                       </div>
                     )}
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: `${model.color}15`, border: `1px solid ${model.color}25` }}>
-                      <Icon className="w-5 h-5" style={{ color: model.color }} />
-                    </div>
-                    <h3 className="text-lg font-bold mb-1" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>{model.name}</h3>
-                    <p className="text-[11px] mb-4 leading-relaxed" style={{ color: '#64748B' }}>{model.description}</p>
+                    <div className="relative z-10">
+                      <div className="w-10 h-10 flex items-center justify-center border border-white/20 bg-white/5 mb-6 group-hover:bg-white group-hover:text-black transition-colors">
+                        <Icon className="w-5 h-5 text-white group-hover:text-black transition-colors" />
+                      </div>
+                      <h3 className="text-lg font-light uppercase tracking-widest mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{model.name}</h3>
+                      <p className="text-[10px] mb-6 leading-relaxed" style={{ color: '#AAAAAA', fontFamily: 'Inter' }}>{model.description}</p>
 
-                    <div className="space-y-2">
-                      {(['accuracy', 'precision', 'recall', 'f1', 'rocAuc'] as const).map((metric) => (
-                        <div key={metric} className="flex items-center justify-between">
-                          <span className="text-[10px]" style={{ color: '#94A3B8' }}>
-                            {metric === 'rocAuc' ? 'ROC-AUC' : metric.charAt(0).toUpperCase() + metric.slice(1)}
-                          </span>
-                          <div className="flex items-center gap-2">
-                            <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                              <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${model[metric] * 100}%` }}
-                                transition={{ duration: 1, delay: 0.3 + i * 0.1 }}
-                                className="h-full rounded-full"
-                                style={{ background: model.color }}
-                              />
-                            </div>
-                            <span className="text-[10px] font-bold w-10 text-right" style={{ fontFamily: 'JetBrains Mono, monospace', color: model.color }}>
-                              {(model[metric] * 100).toFixed(1)}
+                      <div className="space-y-3">
+                        {(['accuracy', 'precision', 'recall', 'f1', 'rocAuc'] as const).map((metric) => (
+                          <div key={metric} className="flex items-center justify-between">
+                            <span className="text-[10px] uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>
+                              {metric === 'rocAuc' ? 'ROC-AUC' : metric.charAt(0).toUpperCase() + metric.slice(1)}
                             </span>
+                            <div className="flex items-center gap-3">
+                              <div className="w-16 h-px bg-white/10 relative">
+                                <motion.div
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${model[metric] * 100}%` }}
+                                  transition={{ duration: 1, delay: 0.3 + i * 0.1 }}
+                                  className="absolute top-0 left-0 bottom-0 bg-white"
+                                />
+                              </div>
+                              <span className="text-[10px] font-bold w-10 text-right" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#FFFFFF' }}>
+                                {(model[metric] * 100).toFixed(1)}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </RevealSection>
@@ -179,18 +186,19 @@ export default function ModelArenaPage() {
           {/* Radar + Bar Comparison */}
           <div className="grid lg:grid-cols-2 gap-6 mb-12">
             <RevealSection>
-              <div className="glass rounded-2xl p-6 h-full">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
-                  <BarChart3 className="w-5 h-5" style={{ color: '#00E5FF' }} /> Performance Radar
+              <div className="border border-white/20 bg-black/60 p-8 relative overflow-hidden h-full">
+                <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
+                <h3 className="text-xl font-light uppercase tracking-widest mb-8 flex items-center gap-3 relative z-10" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  <BarChart3 className="w-5 h-5 text-white" /> Performance Radar
                 </h3>
-                <div className="h-80">
+                <div className="h-80 relative z-10">
                   <ResponsiveContainer width="100%" height="100%">
                     <RadarChart data={radarData}>
-                      <PolarGrid stroke="rgba(255,255,255,0.08)" />
-                      <PolarAngleAxis dataKey="metric" tick={{ fontSize: 11, fill: '#94A3B8', fontFamily: 'Inter' }} />
-                      <PolarRadiusAxis tick={{ fontSize: 10, fill: '#64748B' }} domain={[0.6, 1]} />
+                      <PolarGrid stroke="rgba(255,255,255,0.2)" />
+                      <PolarAngleAxis dataKey="metric" tick={{ fontSize: 10, fill: '#888888', fontFamily: 'JetBrains Mono' }} />
+                      <PolarRadiusAxis tick={{ fontSize: 10, fill: '#555555' }} domain={[0.6, 1]} />
                       {models.map((m) => (
-                        <Radar key={m.name} name={m.name} dataKey={m.name} stroke={m.color} fill={m.color} fillOpacity={m.isBest ? 0.15 : 0.05} strokeWidth={m.isBest ? 2 : 1} />
+                        <Radar key={m.name} name={m.name} dataKey={m.name} stroke={m.color} fill={m.color} fillOpacity={m.isBest ? 0.3 : 0.1} strokeWidth={m.isBest ? 2 : 1} />
                       ))}
                       <Tooltip content={<CustomTooltip />} />
                     </RadarChart>
@@ -200,18 +208,19 @@ export default function ModelArenaPage() {
             </RevealSection>
 
             <RevealSection delay={0.1}>
-              <div className="glass rounded-2xl p-6 h-full">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
-                  <Trophy className="w-5 h-5" style={{ color: '#F59E0B' }} /> Leaderboard
+              <div className="border border-white/20 bg-black/60 p-8 relative overflow-hidden h-full">
+                <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
+                <h3 className="text-xl font-light uppercase tracking-widest mb-8 flex items-center gap-3 relative z-10" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  <Trophy className="w-5 h-5 text-white" /> Leaderboard
                 </h3>
-                <div className="h-80">
+                <div className="h-80 relative z-10">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={comparisonData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                      <XAxis dataKey="name" stroke="#64748B" tick={{ fontSize: 11, fontFamily: 'Inter' }} />
-                      <YAxis stroke="#64748B" tick={{ fontSize: 11, fontFamily: 'JetBrains Mono' }} domain={[0.6, 1]} />
+                      <CartesianGrid strokeDasharray="1 4" stroke="rgba(255,255,255,0.1)" />
+                      <XAxis dataKey="name" stroke="#888888" tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} />
+                      <YAxis stroke="#888888" tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} domain={[0.6, 1]} />
                       <Tooltip content={<CustomTooltip />} />
-                      <Bar dataKey="accuracy" name="Accuracy" radius={[4, 4, 0, 0]} maxBarSize={30}>
+                      <Bar dataKey="accuracy" name="Accuracy" maxBarSize={30}>
                         {comparisonData.map((d, i) => <Cell key={i} fill={d.color} />)}
                       </Bar>
                     </BarChart>

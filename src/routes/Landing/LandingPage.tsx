@@ -1,6 +1,6 @@
-import { useRef, useEffect, Suspense } from 'react';
+import { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform, useInView } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { Zap, BarChart3, Brain, ArrowRight, ChevronDown, Code2, Coffee, Moon, GitCommit, Bug, Activity, Sparkles, TrendingUp } from 'lucide-react';
 import SceneContainer from '@/components/3d/SceneContainer';
 
@@ -42,13 +42,13 @@ function SectionReveal({ children, className = '', delay = 0 }: {
   children: React.ReactNode; className?: string; delay?: number;
 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const isInView = useInView(ref, { once: false, margin: '-20%' });
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 60 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      initial={{ opacity: 0, y: 40 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
       transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >
@@ -58,55 +58,27 @@ function SectionReveal({ children, className = '', delay = 0 }: {
 }
 
 /* ============================================ */
-/* Floating Feature Card                         */
+/* Feature Row                                   */
 /* ============================================ */
-function FeatureCard({ icon: Icon, title, description, delay, color }: {
-  icon: React.ComponentType<{ className?: string, style?: React.CSSProperties }>; title: string; description: string; delay: number; color: string;
+function FeatureRow({ icon: Icon, title, description, delay }: {
+  icon: React.ComponentType<{ className?: string, style?: React.CSSProperties }>; title: string; description: string; delay: number;
 }) {
   return (
     <SectionReveal delay={delay}>
-      <div className="glass rounded-2xl p-6 card-hover group cursor-pointer h-full">
-        <div
-          className="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
-          style={{ background: `${color}15`, border: `1px solid ${color}30` }}
-        >
-          <Icon className="w-6 h-6" style={{ color: color }} />
+      <div className="flex items-start gap-6 p-6 border-b border-white/10 hover:bg-white/5 transition-colors duration-300">
+        <div className="w-12 h-12 flex items-center justify-center border border-white/20 shrink-0">
+          <Icon className="w-5 h-5 text-white" />
         </div>
-        <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
-          {title}
-        </h3>
-        <p className="text-sm leading-relaxed" style={{ color: '#94A3B8' }}>
-          {description}
-        </p>
+        <div>
+          <h3 className="text-xl font-medium mb-2 tracking-wide uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+            {title}
+          </h3>
+          <p className="text-sm leading-relaxed text-gray-400">
+            {description}
+          </p>
+        </div>
       </div>
     </SectionReveal>
-  );
-}
-
-/* ============================================ */
-/* Marquee                                       */
-/* ============================================ */
-function TechMarquee() {
-  const items = [
-    'React 19', 'TypeScript', 'ONNX Runtime', 'Three.js', 'Framer Motion', 'GSAP',
-    'Tailwind CSS', 'Zustand', 'Vite', 'D3.js', 'Recharts', 'Machine Learning',
-    'XGBoost', 'Random Forest', 'Neural Networks', 'Real-time Inference',
-  ];
-
-  return (
-    <div className="overflow-hidden py-6" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-      <div className="flex animate-[marquee_40s_linear_infinite]">
-        {[...items, ...items].map((item, i) => (
-          <span
-            key={i}
-            className="mx-8 text-sm font-medium whitespace-nowrap"
-            style={{ color: '#64748B', fontFamily: 'JetBrains Mono, monospace' }}
-          >
-            {item}
-          </span>
-        ))}
-      </div>
-    </div>
   );
 }
 
@@ -114,228 +86,123 @@ function TechMarquee() {
 /* LANDING PAGE                                  */
 /* ============================================ */
 export default function LandingPage() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: containerRef });
-  
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
-  const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.95]);
-
   return (
-    <div ref={containerRef} className="relative">
+    <div className="relative w-full bg-black text-white">
+      {/* 3D Fixed Background */}
+      <SceneContainer isFixedScroll={true} />
+      
+      {/* Cinematic Overlays */}
+      <div className="vignette-overlay" />
+      <div className="noise-overlay" />
+      <div className="film-lines" />
+
       {/* ============================================ */}
-      {/* SCENE 1 — THE HERO                           */}
+      {/* SCENE 1 — THE VOID (HERO)                    */}
       {/* ============================================ */}
-      <motion.section
-        style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
-      >
-        {/* 3D Background */}
-        <div className="absolute inset-0">
-          <Suspense fallback={null}>
-            <SceneContainer variant="hero" />
-          </Suspense>
+      <section className="relative h-[100vh] flex flex-col items-center justify-center overflow-hidden">
+        <div className="container relative z-10 text-center">
+          <SectionReveal delay={0.2}>
+            <div className="inline-block border border-white/20 px-4 py-2 mb-8 tracking-widest text-xs uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+              System Initialization
+            </div>
+          </SectionReveal>
+
+          <SectionReveal delay={0.4}>
+            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-light mb-6 tracking-tighter uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              Predict Developer <br />
+              <span className="font-bold">Productivity</span>
+            </h1>
+          </SectionReveal>
+
+          <SectionReveal delay={0.6}>
+            <p className="text-lg sm:text-xl max-w-2xl mx-auto mb-12 text-gray-400 font-light">
+              Understand success patterns. Optimize performance. Make data-driven decisions 
+              with raw machine learning running directly in your browser.
+            </p>
+          </SectionReveal>
+
+          <SectionReveal delay={0.8}>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <Link to="/dashboard" className="magnetic-btn magnetic-btn-primary w-64 h-16">
+                Launch System
+              </Link>
+              <Link to="/analytics" className="magnetic-btn magnetic-btn-secondary w-64 h-16">
+                Explore Data
+              </Link>
+            </div>
+          </SectionReveal>
         </div>
 
-        {/* Aurora overlay */}
-        <div className="absolute inset-0 aurora-bg opacity-40" />
-        
-        {/* Radial gradient overlay */}
-        <div className="absolute inset-0" style={{
-          background: 'radial-gradient(ellipse at center, transparent 0%, #050816 70%)',
-        }} />
-
-        {/* Content */}
-        <div className="relative z-10 container text-center">
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8"
-            style={{ background: 'rgba(0, 229, 255, 0.1)', border: '1px solid rgba(0, 229, 255, 0.2)' }}
-          >
-            <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#00E5FF' }} />
-            <span className="text-xs font-medium" style={{ color: '#00E5FF', fontFamily: 'JetBrains Mono, monospace' }}>
-              AI-Powered Prediction Engine
-            </span>
-          </motion.div>
-
-          {/* Main Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[0.95] tracking-tight"
-            style={{ fontFamily: 'Space Grotesk, sans-serif' }}
-          >
-            <span style={{ color: '#F1F5F9' }}>Predict Developer</span>
-            <br />
-            <span className="gradient-text">Productivity</span>
-          </motion.h1>
-
-          {/* Subheadline */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed"
-            style={{ color: '#94A3B8' }}
-          >
-            Understand success patterns. Optimize performance. Make data-driven decisions 
-            with real machine learning running directly in your browser.
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <Link
-              to="/dashboard"
-              className="magnetic-btn magnetic-btn-primary group text-base"
-            >
-              <Zap className="w-5 h-5 mr-2" />
-              Launch Dashboard
-              <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-            </Link>
-            <Link
-              to="/analytics"
-              className="magnetic-btn magnetic-btn-secondary text-base"
-            >
-              <BarChart3 className="w-5 h-5 mr-2" />
-              Explore Analytics
-            </Link>
-          </motion.div>
-
-          {/* Stats Row */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
-            className="grid grid-cols-3 gap-8 max-w-lg mx-auto mt-16"
-          >
-            {[
-              { value: 500, suffix: '+', label: 'Data Points' },
-              { value: 8, suffix: '', label: 'Features' },
-              { value: 95, suffix: '%', label: 'Accuracy' },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold mb-1" style={{ color: '#00E5FF' }}>
-                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
-                </div>
-                <div className="text-xs" style={{ color: '#64748B', fontFamily: 'JetBrains Mono, monospace' }}>
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
         >
-          <span className="text-xs" style={{ color: '#64748B', fontFamily: 'JetBrains Mono, monospace' }}>
-            Scroll to explore
+          <span className="text-[10px] tracking-widest uppercase text-gray-500" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+            Scroll to Dive Deeper
           </span>
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          >
-            <ChevronDown className="w-5 h-5" style={{ color: '#64748B' }} />
-          </motion.div>
+          <div className="w-[1px] h-12 bg-gradient-to-b from-white/50 to-transparent" />
         </motion.div>
-      </motion.section>
+      </section>
 
       {/* ============================================ */}
-      {/* TECH MARQUEE                                 */}
+      {/* SCENE 2 — THE ARCHITECT (Features)           */}
       {/* ============================================ */}
-      <TechMarquee />
-
-      {/* ============================================ */}
-      {/* SCENE 2 — THE BUILDER (Features)             */}
-      {/* ============================================ */}
-      <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 grid-pattern opacity-50" />
-        
+      <section className="relative min-h-[100vh] flex items-center py-32">
         <div className="container relative z-10">
-          <SectionReveal className="text-center mb-16">
-            <span className="text-xs font-medium px-3 py-1.5 rounded-full mb-4 inline-block"
-              style={{ color: '#00E5FF', background: 'rgba(0,229,255,0.1)', border: '1px solid rgba(0,229,255,0.15)', fontFamily: 'JetBrains Mono, monospace' }}>
-              THE BUILDER
-            </span>
-            <h2 className="text-4xl sm:text-5xl font-bold mt-4 mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
-              Every great product begins
-              <br />
-              <span className="gradient-text">with a developer</span>
-            </h2>
-            <p className="text-lg max-w-2xl mx-auto" style={{ color: '#94A3B8' }}>
-              We analyze 8 critical dimensions of developer productivity to predict task success with machine learning precision.
-            </p>
-          </SectionReveal>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <FeatureCard icon={Code2} title="Coding Hours" description="Track deep work sessions and their impact on deliverables and code quality." delay={0} color="#00E5FF" />
-            <FeatureCard icon={Moon} title="Sleep Quality" description="Understand how rest patterns correlate with cognitive performance and output." delay={0.1} color="#7C3AED" />
-            <FeatureCard icon={Coffee} title="Caffeine Intake" description="Monitor stimulant consumption and its diminishing returns on productivity." delay={0.2} color="#F59E0B" />
-            <FeatureCard icon={Activity} title="Cognitive Load" description="Measure mental fatigue and its effect on decision quality and error rates." delay={0.3} color="#EF4444" />
-            <FeatureCard icon={GitCommit} title="Commit Frequency" description="Analyze version control activity as a signal of consistent progress." delay={0.4} color="#10B981" />
-            <FeatureCard icon={Bug} title="Bug Reports" description="Track defect patterns to understand code quality under different conditions." delay={0.5} color="#EF4444" />
-            <FeatureCard icon={Sparkles} title="AI Usage" description="Measure AI tool adoption and its multiplier effect on developer output." delay={0.6} color="#22D3EE" />
-            <FeatureCard icon={TrendingUp} title="Success Prediction" description="Real-time ML predictions running entirely in your browser via ONNX." delay={0.7} color="#00E5FF" />
+          <div className="grid lg:grid-cols-2 gap-16">
+            <div>
+              <SectionReveal>
+                <div className="text-xs tracking-widest text-gray-500 mb-4 uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                  // Scene 02: The Architect
+                </div>
+                <h2 className="text-4xl sm:text-6xl font-light mb-8 tracking-tight uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                  Deconstruct <br/><span className="font-bold">Performance</span>
+                </h2>
+                <p className="text-lg text-gray-400 mb-12">
+                  We analyze 8 critical dimensions of developer productivity to predict task success with machine learning precision. 
+                  Every input is a vector in high-dimensional space.
+                </p>
+              </SectionReveal>
+            </div>
+            <div className="space-y-0 border-t border-white/10">
+              <FeatureRow icon={Code2} title="Coding Hours" description="Track deep work sessions and their impact on deliverables and code quality." delay={0.1} />
+              <FeatureRow icon={Moon} title="Sleep Quality" description="Understand how rest patterns correlate with cognitive performance." delay={0.2} />
+              <FeatureRow icon={Activity} title="Cognitive Load" description="Measure mental fatigue and its effect on decision quality and error rates." delay={0.3} />
+              <FeatureRow icon={GitCommit} title="Commit Frequency" description="Analyze version control activity as a signal of consistent progress." delay={0.4} />
+            </div>
           </div>
         </div>
       </section>
 
       {/* ============================================ */}
-      {/* SCENE 3 — THE DATA GALAXY                    */}
+      {/* SCENE 3 — THE NEXUS (Data Galaxy)            */}
       {/* ============================================ */}
-      <section className="relative py-32 overflow-hidden">
-        {/* 3D Galaxy Background */}
-        <div className="absolute inset-0 opacity-60">
-          <Suspense fallback={null}>
-            <SceneContainer variant="galaxy" />
-          </Suspense>
-        </div>
-        <div className="absolute inset-0" style={{
-          background: 'linear-gradient(180deg, #050816 0%, transparent 20%, transparent 80%, #050816 100%)',
-        }} />
-
+      <section className="relative min-h-[100vh] flex items-center justify-center py-32">
         <div className="container relative z-10">
-          <SectionReveal className="text-center mb-16">
-            <span className="text-xs font-medium px-3 py-1.5 rounded-full mb-4 inline-block"
-              style={{ color: '#22D3EE', background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.15)', fontFamily: 'JetBrains Mono, monospace' }}>
-              THE DATA GALAXY
-            </span>
-            <h2 className="text-4xl sm:text-5xl font-bold mt-4 mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
-              Patterns exist inside
-              <br />
-              <span className="gradient-text">every work session</span>
+          <SectionReveal className="max-w-3xl">
+            <div className="text-xs tracking-widest text-gray-500 mb-4 uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+              // Scene 03: The Nexus
+            </div>
+            <h2 className="text-4xl sm:text-6xl font-light mb-8 tracking-tight uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              Patterns in the <br/><span className="font-bold">Noise</span>
             </h2>
-            <p className="text-lg max-w-2xl mx-auto" style={{ color: '#94A3B8' }}>
-              500+ data points transform into insights. Each row becomes a star in our data universe, revealing hidden correlations.
-            </p>
           </SectionReveal>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border border-white/20 mt-16">
             {[
-              { label: 'Dataset Records', value: 501, color: '#00E5FF' },
-              { label: 'Feature Dimensions', value: 8, color: '#7C3AED' },
-              { label: 'Success Rate', value: 57, suffix: '%', color: '#10B981' },
-              { label: 'ML Models', value: 4, color: '#F59E0B' },
+              { label: 'Dataset Records', value: 501 },
+              { label: 'Feature Dimensions', value: 8 },
+              { label: 'Success Rate', value: 57, suffix: '%' },
+              { label: 'ML Models', value: 4 },
             ].map((stat, i) => (
-              <SectionReveal key={stat.label} delay={i * 0.1}>
-                <div className="glass rounded-2xl p-6 text-center card-hover">
-                  <div className="text-4xl font-bold mb-2" style={{ color: stat.color }}>
-                    <AnimatedCounter value={stat.value} suffix={stat.suffix || ''} />
-                  </div>
-                  <div className="text-sm" style={{ color: '#94A3B8' }}>{stat.label}</div>
+              <SectionReveal key={stat.label} delay={i * 0.1} className="bg-black p-8 sm:p-12">
+                <div className="text-5xl font-light mb-4 text-white">
+                  <AnimatedCounter value={stat.value} suffix={stat.suffix || ''} />
+                </div>
+                <div className="text-xs tracking-widest text-gray-500 uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                  {stat.label}
                 </div>
               </SectionReveal>
             ))}
@@ -344,157 +211,80 @@ export default function LandingPage() {
       </section>
 
       {/* ============================================ */}
-      {/* SCENE 4 — THE AI CORE                        */}
+      {/* SCENE 4 — THE ORACLE (AI Core)               */}
       {/* ============================================ */}
-      <section className="relative py-32 overflow-hidden">
+      <section className="relative min-h-[100vh] flex items-center py-32">
         <div className="container relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left: 3D Core */}
+          <div className="max-w-xl ml-auto">
             <SectionReveal>
-              <div className="relative h-[500px] rounded-3xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.05)' }}>
-                <Suspense fallback={null}>
-                  <SceneContainer variant="core" />
-                </Suspense>
-                <div className="absolute inset-0 pointer-events-none" style={{
-                  background: 'radial-gradient(ellipse at center, transparent 30%, #050816 100%)',
-                }} />
+              <div className="text-xs tracking-widest text-gray-500 mb-4 uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                // Scene 04: The Oracle
               </div>
+              <h2 className="text-4xl sm:text-6xl font-light mb-8 tracking-tight uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+                Inference <br/><span className="font-bold">Engine</span>
+              </h2>
+              <p className="text-lg text-gray-400 mb-12">
+                Four models compete in our AI arena. The best is exported to ONNX format and runs real-time inference directly in your browser — zero latency, pure computation.
+              </p>
             </SectionReveal>
 
-            {/* Right: Content */}
-            <div>
-              <SectionReveal>
-                <span className="text-xs font-medium px-3 py-1.5 rounded-full mb-4 inline-block"
-                  style={{ color: '#7C3AED', background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.15)', fontFamily: 'JetBrains Mono, monospace' }}>
-                  THE AI CORE
-                </span>
-                <h2 className="text-4xl sm:text-5xl font-bold mt-4 mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
-                  Machine learning discovers
-                  <br />
-                  <span className="gradient-text">hidden relationships</span>
-                </h2>
-                <p className="text-lg mb-8" style={{ color: '#94A3B8' }}>
-                  Four models compete in our AI arena. The best is exported to ONNX format and runs real-time inference directly in your browser — no API, no server, no latency.
-                </p>
-              </SectionReveal>
-
-              {/* Model list */}
-              <div className="space-y-3">
-                {[
-                  { name: 'Logistic Regression', desc: 'Linear baseline', color: '#22D3EE' },
-                  { name: 'Decision Tree', desc: 'Interpretable splits', color: '#10B981' },
-                  { name: 'Random Forest', desc: 'Ensemble power', color: '#F59E0B' },
-                  { name: 'XGBoost', desc: 'Champion model', color: '#00E5FF', best: true },
-                ].map((model, i) => (
-                  <SectionReveal key={model.name} delay={i * 0.1}>
-                    <div className={`glass rounded-xl p-4 flex items-center gap-4 card-hover ${model.best ? 'glow-primary' : ''}`}>
-                      <div className="w-3 h-3 rounded-full" style={{ background: model.color }} />
-                      <div className="flex-1">
-                        <div className="text-sm font-semibold" style={{ color: '#F1F5F9', fontFamily: 'Space Grotesk, sans-serif' }}>
-                          {model.name}
-                          {model.best && (
-                            <span className="ml-2 text-[10px] px-2 py-0.5 rounded-full"
-                              style={{ background: 'rgba(0,229,255,0.15)', color: '#00E5FF', fontFamily: 'JetBrains Mono, monospace' }}>
-                              BEST
-                            </span>
-                          )}
-                        </div>
-                        <div className="text-xs" style={{ color: '#64748B' }}>{model.desc}</div>
-                      </div>
+            <div className="space-y-4">
+              {[
+                { name: 'XGBoost', desc: 'Champion Model (Active)', active: true },
+                { name: 'Random Forest', desc: 'Ensemble Analysis', active: false },
+                { name: 'Decision Tree', desc: 'Interpretable Logic', active: false },
+                { name: 'Logistic Regression', desc: 'Linear Baseline', active: false },
+              ].map((model, i) => (
+                <SectionReveal key={model.name} delay={i * 0.1}>
+                  <div className={`p-4 border ${model.active ? 'border-white bg-white/5' : 'border-white/10'} flex items-center justify-between`}>
+                    <div>
+                      <div className="text-sm font-bold uppercase tracking-wide">{model.name}</div>
+                      <div className="text-xs text-gray-500 mt-1" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{model.desc}</div>
                     </div>
-                  </SectionReveal>
-                ))}
-              </div>
+                    {model.active && (
+                      <div className="w-2 h-2 bg-white animate-pulse" />
+                    )}
+                  </div>
+                </SectionReveal>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
       {/* ============================================ */}
-      {/* SCENE 5 — THE FUTURE (CTA)                   */}
+      {/* SCENE 5 — THE HORIZON (CTA)                  */}
       {/* ============================================ */}
-      <section className="relative py-32 overflow-hidden">
-        <div className="absolute inset-0 aurora-bg opacity-30" />
-        <div className="absolute inset-0 grid-pattern opacity-30" />
-
+      <section className="relative min-h-[100vh] flex flex-col items-center justify-center py-32">
         <div className="container relative z-10 text-center">
           <SectionReveal>
-            <span className="text-xs font-medium px-3 py-1.5 rounded-full mb-4 inline-block"
-              style={{ color: '#10B981', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.15)', fontFamily: 'JetBrains Mono, monospace' }}>
-              THE FUTURE
-            </span>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mt-4 mb-6" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
-              The future is not guessed.
-              <br />
-              <span className="gradient-text">It is predicted.</span>
+            <div className="text-xs tracking-widest text-gray-500 mb-4 uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+              // Scene 05: The Horizon
+            </div>
+            <h2 className="text-5xl sm:text-7xl font-light mb-8 tracking-tight uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+              The future is <span className="font-bold">Predicted</span>
             </h2>
-            <p className="text-lg max-w-2xl mx-auto mb-12" style={{ color: '#94A3B8' }}>
-              Start making data-driven decisions about developer productivity. 
-              No signup required. No data leaves your browser. Everything runs locally.
+            <p className="text-lg max-w-2xl mx-auto mb-16 text-gray-400">
+              Start making data-driven decisions about developer productivity today. 
+              No signup required. No data leaves your browser.
             </p>
           </SectionReveal>
 
           <SectionReveal delay={0.2}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                to="/dashboard"
-                className="magnetic-btn magnetic-btn-primary text-lg group"
-              >
-                <Zap className="w-5 h-5 mr-2" />
-                Launch Dashboard
-                <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
-              </Link>
-              <Link
-                to="/analytics"
-                className="magnetic-btn magnetic-btn-secondary text-lg"
-              >
-                <BarChart3 className="w-5 h-5 mr-2" />
-                Explore Analytics
-              </Link>
-              <Link
-                to="/about"
-                className="magnetic-btn magnetic-btn-secondary text-lg"
-              >
-                <Brain className="w-5 h-5 mr-2" />
-                Understand AI
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <Link to="/dashboard" className="magnetic-btn magnetic-btn-primary w-64 h-16">
+                Initialize Sequence
               </Link>
             </div>
           </SectionReveal>
-
-          {/* Bottom gradient divider */}
-          <div className="mt-32 h-px" style={{
-            background: 'linear-gradient(90deg, transparent, rgba(0,229,255,0.3), rgba(124,58,237,0.3), transparent)',
-          }} />
+        </div>
+        
+        {/* Footer info at absolute bottom */}
+        <div className="absolute bottom-8 left-0 right-0 flex justify-between px-8 text-[10px] text-gray-600 uppercase tracking-widest" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+          <span>Devpulse AI // System v1.0</span>
+          <span>End of Transmission</span>
         </div>
       </section>
-
-      {/* ============================================ */}
-      {/* FOOTER                                        */}
-      {/* ============================================ */}
-      <footer className="py-16 px-4" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-        <div className="container">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #00E5FF, #7C3AED)' }}
-              >
-                <Zap className="w-4 h-4 text-white" strokeWidth={2.5} />
-              </div>
-              <span className="text-sm font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
-                DEVPULSE AI
-              </span>
-            </div>
-            
-            <p className="text-xs" style={{ color: '#64748B', fontFamily: 'JetBrains Mono, monospace' }}>
-              Built with React 19 · ONNX Runtime Web · Three.js · Real ML
-            </p>
-
-            <p className="text-xs" style={{ color: '#64748B' }}>
-              © {new Date().getFullYear()} DEVPULSE AI. All predictions run locally.
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

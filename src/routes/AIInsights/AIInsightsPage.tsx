@@ -20,35 +20,34 @@ function RevealSection({ children, className = '', delay = 0 }: { children: Reac
 
 // Simulated SHAP-like feature impact data
 const featureImpacts = [
-  { feature: 'Hours Coding', impact: 0.22, direction: 'positive', color: '#00E5FF' },
-  { feature: 'Sleep Hours', impact: 0.20, direction: 'positive', color: '#7C3AED' },
-  { feature: 'Distractions', impact: -0.18, direction: 'negative', color: '#EF4444' },
-  { feature: 'Coffee Intake', impact: 0.12, direction: 'positive', color: '#F59E0B' },
-  { feature: 'Commits', impact: 0.10, direction: 'positive', color: '#10B981' },
-  { feature: 'Cognitive Load', impact: -0.09, direction: 'negative', color: '#EF4444' },
-  { feature: 'Bugs Reported', impact: -0.06, direction: 'negative', color: '#EF4444' },
-  { feature: 'AI Usage', impact: 0.05, direction: 'positive', color: '#22D3EE' },
+  { feature: 'Hours Coding', impact: 0.22, direction: 'positive', color: '#FFFFFF' },
+  { feature: 'Sleep Hours', impact: 0.20, direction: 'positive', color: '#DDDDDD' },
+  { feature: 'Distractions', impact: -0.18, direction: 'negative', color: '#555555' },
+  { feature: 'Coffee Intake', impact: 0.12, direction: 'positive', color: '#BBBBBB' },
+  { feature: 'Commits', impact: 0.10, direction: 'positive', color: '#999999' },
+  { feature: 'Cognitive Load', impact: -0.09, direction: 'negative', color: '#444444' },
+  { feature: 'Bugs Reported', impact: -0.06, direction: 'negative', color: '#333333' },
+  { feature: 'AI Usage', impact: 0.05, direction: 'positive', color: '#777777' },
 ];
 
 function WaterfallChart() {
   const data = featureImpacts.map((f) => ({
     name: f.feature,
     value: Math.abs(f.impact),
-    fill: f.impact >= 0 ? '#10B981' : '#EF4444',
+    fill: f.color,
   }));
 
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data} layout="vertical" margin={{ left: 90 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
-        <XAxis type="number" stroke="#64748B" tick={{ fontSize: 11, fontFamily: 'JetBrains Mono' }} />
-        <YAxis type="category" dataKey="name" stroke="#64748B" tick={{ fontSize: 11, fontFamily: 'Inter' }} width={90} />
+        <CartesianGrid strokeDasharray="1 4" stroke="rgba(255,255,255,0.05)" horizontal={false} />
+        <XAxis type="number" stroke="#888888" tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} />
+        <YAxis type="category" dataKey="name" stroke="#AAAAAA" tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} width={90} />
         <Tooltip
-          contentStyle={{ background: 'rgba(15,23,42,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
-          labelStyle={{ color: '#F1F5F9', fontFamily: 'Space Grotesk' }}
-          itemStyle={{ color: '#94A3B8', fontFamily: 'JetBrains Mono' }}
+          contentStyle={{ background: 'rgba(0,0,0,0.95)', border: '1px solid rgba(255,255,255,0.2)', fontSize: 10, textTransform: 'uppercase', fontFamily: 'JetBrains Mono' }}
+          itemStyle={{ color: '#FFFFFF', fontFamily: 'JetBrains Mono' }}
         />
-        <Bar dataKey="value" radius={[0, 6, 6, 0]} maxBarSize={22} name="Impact">
+        <Bar dataKey="value" maxBarSize={22} name="Impact">
           {data.map((d, i) => <Cell key={i} fill={d.fill} />)}
         </Bar>
       </BarChart>
@@ -90,22 +89,22 @@ function WhatIfSimulator() {
   const diff = result !== null && baseResult !== null ? result - baseResult : 0;
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="glass rounded-xl p-4 text-center">
-          <div className="text-xs mb-1" style={{ color: '#64748B' }}>Base Prediction</div>
-          <div className="text-2xl font-bold" style={{ fontFamily: 'JetBrains Mono', color: '#94A3B8' }}>
+    <div className="space-y-6 relative z-10">
+      <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="border border-white/20 bg-black p-6 text-center hover:bg-white/5 transition-colors">
+          <div className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>Base Output</div>
+          <div className="text-3xl font-light" style={{ fontFamily: 'JetBrains Mono', color: '#AAAAAA' }}>
             {baseResult !== null ? (baseResult * 100).toFixed(1) : '—'}%
           </div>
         </div>
-        <div className="glass rounded-xl p-4 text-center">
-          <div className="text-xs mb-1" style={{ color: '#64748B' }}>Current Prediction</div>
-          <div className="text-2xl font-bold" style={{ fontFamily: 'JetBrains Mono', color: diff >= 0 ? '#10B981' : '#EF4444' }}>
+        <div className="border border-white bg-white/5 p-6 text-center">
+          <div className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#FFFFFF', fontFamily: 'JetBrains Mono' }}>Simulated Output</div>
+          <div className="text-3xl font-light" style={{ fontFamily: 'JetBrains Mono', color: '#FFFFFF' }}>
             {result !== null ? (result * 100).toFixed(1) : '—'}%
           </div>
           {diff !== 0 && (
-            <div className="text-xs mt-1" style={{ color: diff >= 0 ? '#10B981' : '#EF4444', fontFamily: 'JetBrains Mono' }}>
-              {diff >= 0 ? '+' : ''}{(diff * 100).toFixed(1)}%
+            <div className="text-[10px] uppercase tracking-widest mt-2" style={{ color: diff >= 0 ? '#FFFFFF' : '#888888', fontFamily: 'JetBrains Mono' }}>
+              DELTA: {diff >= 0 ? '+' : ''}{(diff * 100).toFixed(1)}%
             </div>
           )}
         </div>
@@ -115,16 +114,16 @@ function WhatIfSimulator() {
         const val = inputs[feature.key];
         const pct = ((val - feature.min) / (feature.max - feature.min)) * 100;
         return (
-          <div key={feature.key} className="flex items-center gap-3">
-            <span className="text-xs w-24 flex-shrink-0" style={{ color: '#94A3B8' }}>{feature.label}</span>
+          <div key={feature.key} className="flex items-center gap-4">
+            <span className="text-[10px] uppercase tracking-widest w-24 flex-shrink-0" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>{feature.label}</span>
             <input
               type="range"
               min={feature.min} max={feature.max} step={feature.step} value={val}
               onChange={(e) => handleChange(feature.key, parseFloat(e.target.value))}
-              className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
-              style={{ background: `linear-gradient(to right, #7C3AED ${pct}%, rgba(255,255,255,0.1) ${pct}%)` }}
+              className="flex-1 h-px appearance-none cursor-pointer bg-white/10"
+              style={{ backgroundImage: `linear-gradient(to right, #FFFFFF ${pct}%, transparent ${pct}%)` }}
             />
-            <span className="text-xs w-12 text-right font-bold" style={{ fontFamily: 'JetBrains Mono', color: '#F1F5F9' }}>
+            <span className="text-[10px] w-12 text-right font-bold" style={{ fontFamily: 'JetBrains Mono', color: '#FFFFFF' }}>
               {Number.isInteger(feature.step) ? val : val.toFixed(1)}
             </span>
           </div>
@@ -137,72 +136,79 @@ function WhatIfSimulator() {
 export default function AIInsightsPage() {
   return (
     <PageTransition>
-      <div className="min-h-screen pt-24 pb-32 overflow-hidden">
-        <div className="container">
+      <div className="min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
+        <div className="vignette-overlay" />
+        <div className="noise-overlay" />
+        <div className="film-lines" />
+
+        <div className="container relative z-10">
           {/* Hero */}
-          <div className="relative h-52 rounded-3xl overflow-hidden mb-12" style={{ border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div className="relative h-64 overflow-hidden mb-12 border border-white/20 bg-black">
             <Suspense fallback={null}>
-              <SceneContainer variant="core" />
+              <SceneContainer isFixedScroll={false} />
             </Suspense>
-            <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'radial-gradient(ellipse, rgba(5,8,22,0.5), rgba(5,8,22,0.9))' }}>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
               <div className="text-center">
                 <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl sm:text-4xl font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
+                  className="text-4xl sm:text-5xl font-light uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
                   Inside The Model
                 </motion.h1>
                 <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-                  className="text-sm mt-2" style={{ color: '#94A3B8' }}>
+                  className="text-[10px] uppercase tracking-widest mt-4" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>
                   Understand why the AI makes its predictions
                 </motion.p>
               </div>
             </div>
+            <div className="scan-line" />
           </div>
 
           {/* Feature Impact + SHAP */}
           <div className="grid lg:grid-cols-2 gap-6 mb-12">
             <RevealSection>
-              <div className="glass rounded-2xl p-6 h-full">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(0,229,255,0.1)', border: '1px solid rgba(0,229,255,0.2)' }}>
-                    <ArrowUpDown className="w-5 h-5" style={{ color: '#00E5FF' }} />
+              <div className="border border-white/20 bg-black/60 p-8 relative overflow-hidden h-full">
+                <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
+                <div className="flex items-center gap-4 mb-8 relative z-10">
+                  <div className="w-10 h-10 flex items-center justify-center border border-white/20 bg-white/5">
+                    <ArrowUpDown className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>Feature Impact</h3>
-                    <p className="text-xs" style={{ color: '#94A3B8' }}>SHAP-inspired analysis of feature contributions</p>
+                    <h3 className="text-xl font-light uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Feature Impact</h3>
+                    <p className="text-[10px] uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>SHAP-inspired analysis</p>
                   </div>
                 </div>
-                <div className="h-80">
+                <div className="h-80 relative z-10">
                   <WaterfallChart />
                 </div>
               </div>
             </RevealSection>
 
             <RevealSection delay={0.1}>
-              <div className="glass rounded-2xl p-6 h-full">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.2)' }}>
-                    <Lightbulb className="w-5 h-5" style={{ color: '#7C3AED' }} />
+              <div className="border border-white/20 bg-black/60 p-8 relative overflow-hidden h-full">
+                <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
+                <div className="flex items-center gap-4 mb-8 relative z-10">
+                  <div className="w-10 h-10 flex items-center justify-center border border-white/20 bg-white/5">
+                    <Lightbulb className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>Key Insights</h3>
-                    <p className="text-xs" style={{ color: '#94A3B8' }}>What the model has learned</p>
+                    <h3 className="text-xl font-light uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Key Insights</h3>
+                    <p className="text-[10px] uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>System deductions</p>
                   </div>
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-4 relative z-10">
                   {[
-                    { title: 'Coding hours are the strongest predictor', desc: 'Developers coding 5-8 hours daily show highest success rates. Beyond 8 hours, diminishing returns kick in.', color: '#00E5FF' },
-                    { title: 'Sleep quality matters more than quantity', desc: '7-8 hours of sleep is optimal. Less than 6 hours significantly reduces success probability.', color: '#7C3AED' },
-                    { title: 'Distractions have compound effects', desc: 'Each additional distraction reduces success probability by ~5%. Minimizing interruptions has outsized impact.', color: '#EF4444' },
-                    { title: 'AI tools amplify productivity', desc: '1-3 hours of AI usage correlates with higher success. Beyond that, diminishing returns appear.', color: '#22D3EE' },
-                    { title: 'Cognitive load is a hidden killer', desc: 'High cognitive load (>7) is strongly associated with failure, even when other metrics look good.', color: '#F59E0B' },
+                    { title: 'Coding hours are the strongest predictor', desc: 'Developers coding 5-8 hours daily show highest success rates. Beyond 8 hours, diminishing returns kick in.' },
+                    { title: 'Sleep quality matters more than quantity', desc: '7-8 hours of sleep is optimal. Less than 6 hours significantly reduces success probability.' },
+                    { title: 'Distractions have compound effects', desc: 'Each additional distraction reduces success probability by ~5%. Minimizing interruptions has outsized impact.' },
+                    { title: 'AI tools amplify productivity', desc: '1-3 hours of AI usage correlates with higher success. Beyond that, diminishing returns appear.' },
+                    { title: 'Cognitive load is a hidden killer', desc: 'High cognitive load (>7) is strongly associated with failure, even when other metrics look good.' },
                   ].map((insight, i) => (
                     <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 + i * 0.1 }}
-                      className="p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                      <div className="flex items-start gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style={{ background: insight.color }} />
+                      className="p-4 border border-white/10 bg-white/5 hover:border-white/30 transition-colors">
+                      <div className="flex items-start gap-3">
+                        <div className="w-1.5 h-1.5 mt-1.5 flex-shrink-0 bg-white" />
                         <div>
-                          <div className="text-xs font-semibold" style={{ color: '#F1F5F9' }}>{insight.title}</div>
-                          <div className="text-[10px] mt-0.5 leading-relaxed" style={{ color: '#64748B' }}>{insight.desc}</div>
+                          <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#FFFFFF', fontFamily: 'JetBrains Mono' }}>{insight.title}</div>
+                          <div className="text-[10px] leading-relaxed" style={{ color: '#888888', fontFamily: 'Inter' }}>{insight.desc}</div>
                         </div>
                       </div>
                     </motion.div>
@@ -214,14 +220,15 @@ export default function AIInsightsPage() {
 
           {/* What-If Simulator */}
           <RevealSection className="mb-12">
-            <div className="glass rounded-2xl p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.2)' }}>
-                  <SlidersHorizontal className="w-5 h-5" style={{ color: '#22D3EE' }} />
+            <div className="border border-white/20 bg-black/60 p-8 relative overflow-hidden">
+              <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
+              <div className="flex items-center gap-4 mb-8 relative z-10">
+                <div className="w-10 h-10 flex items-center justify-center border border-white/20 bg-white/5">
+                  <SlidersHorizontal className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>What-If Simulator</h3>
-                  <p className="text-xs" style={{ color: '#94A3B8' }}>Adjust features and see how predictions change in real-time</p>
+                  <h3 className="text-xl font-light uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>What-If Simulator</h3>
+                  <p className="text-[10px] uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>Real-time prediction adjustments</p>
                 </div>
               </div>
               <WhatIfSimulator />

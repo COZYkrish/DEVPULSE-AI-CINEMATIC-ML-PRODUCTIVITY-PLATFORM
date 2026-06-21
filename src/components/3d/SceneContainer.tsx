@@ -1,277 +1,183 @@
-import { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, Stars } from '@react-three/drei';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
+import { useRef, useMemo, useEffect } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Float, Stars, Text, Trail, MeshDistortMaterial, Wireframe, Html } from '@react-three/drei';
+import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing';
 import * as THREE from 'three';
 
 /* ============================================ */
-/* Particle Field — Reusable instanced particles */
+/* Custom 3D Assets (Monochrome)                 */
 /* ============================================ */
-function ParticleFieldMesh({ count = 200, color = '#00E5FF', size = 0.03, spread = 10, speed = 0.2 }: {
-  count?: number; color?: string; size?: number; spread?: number; speed?: number;
-}) {
-  const mesh = useRef<THREE.InstancedMesh>(null!);
-  const dummy = useMemo(() => new THREE.Object3D(), []);
-  
-  const particles = useMemo(() => {
-    const temp = [];
-    for (let i = 0; i < count; i++) {
-      temp.push({
-        x: (Math.random() - 0.5) * spread,
-        y: (Math.random() - 0.5) * spread,
-        z: (Math.random() - 0.5) * spread,
-        vx: (Math.random() - 0.5) * speed,
-        vy: (Math.random() - 0.5) * speed,
-        vz: (Math.random() - 0.5) * speed,
-        scale: Math.random() * 0.5 + 0.5,
-      });
-    }
-    return temp;
-  }, [count, spread, speed]);
 
-  useFrame((_, delta) => {
-    if (!mesh.current) return;
-    particles.forEach((p, i) => {
-      p.x += p.vx * delta;
-      p.y += p.vy * delta;
-      p.z += p.vz * delta;
-
-      if (Math.abs(p.x) > spread / 2) p.vx *= -1;
-      if (Math.abs(p.y) > spread / 2) p.vy *= -1;
-      if (Math.abs(p.z) > spread / 2) p.vz *= -1;
-
-      dummy.position.set(p.x, p.y, p.z);
-      dummy.scale.setScalar(p.scale * size);
-      dummy.updateMatrix();
-      mesh.current.setMatrixAt(i, dummy.matrix);
-    });
-    mesh.current.instanceMatrix.needsUpdate = true;
-  });
-
-  return (
-    <instancedMesh ref={mesh} args={[undefined, undefined, count]}>
-      <sphereGeometry args={[1, 8, 8]} />
-      <meshBasicMaterial color={color} transparent opacity={0.8} />
-    </instancedMesh>
-  );
-}
-
-/* ============================================ */
-/* Glowing Sphere                                */
-/* ============================================ */
-function GlowingSphere({ position = [0, 0, 0] as [number, number, number], color = '#00E5FF', scale = 1 }) {
-  const meshRef = useRef<THREE.Mesh>(null!);
-  
+function HeroObject() {
+  const ref = useRef<THREE.Mesh>(null!);
   useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.scale.setScalar(scale + Math.sin(state.clock.elapsedTime * 2) * 0.05);
-    }
+    ref.current.rotation.x = state.clock.elapsedTime * 0.2;
+    ref.current.rotation.y = state.clock.elapsedTime * 0.3;
   });
-
   return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-      <mesh ref={meshRef} position={position}>
-        <sphereGeometry args={[0.5, 32, 32]} />
-        <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={0.5}
-          transparent
-          opacity={0.8}
-        />
+    <Float speed={2} rotationIntensity={1} floatIntensity={2}>
+      <mesh ref={ref} position={[0, 0, -5]}>
+        <torusKnotGeometry args={[2, 0.4, 128, 32]} />
+        <MeshDistortMaterial color="#ffffff" emissive="#222222" wireframe distort={0.2} speed={2} />
       </mesh>
     </Float>
   );
 }
 
-/* ============================================ */
-/* Energy Ring                                   */
-/* ============================================ */
-function EnergyRing({ radius = 2, color = '#00E5FF', speed = 1, thickness = 0.02 }: {
-  radius?: number; color?: string; speed?: number; thickness?: number;
-}) {
-  const ref = useRef<THREE.Mesh>(null!);
-  
+function ArchitectStructure() {
+  const group = useRef<THREE.Group>(null!);
   useFrame((state) => {
-    if (ref.current) {
-      ref.current.rotation.z = state.clock.elapsedTime * speed;
-      ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.3;
+    group.current.rotation.y = state.clock.elapsedTime * 0.1;
+  });
+  return (
+    <group ref={group} position={[0, -20, -10]}>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <mesh key={i} position={[0, i * 2 - 4, 0]} rotation={[Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[3 + i * 0.5, 3.1 + i * 0.5, 64]} />
+          <meshStandardMaterial color="#ffffff" emissive="#555555" side={THREE.DoubleSide} wireframe />
+        </mesh>
+      ))}
+      <mesh position={[0, 0, 0]}>
+        <octahedronGeometry args={[2, 0]} />
+        <meshStandardMaterial color="#111111" wireframe />
+      </mesh>
+    </group>
+  );
+}
+
+function NexusGalaxy() {
+  const group = useRef<THREE.Group>(null!);
+  const count = 2000;
+  const particles = useMemo(() => {
+    const temp = new Float32Array(count * 3);
+    for (let i = 0; i < count * 3; i += 3) {
+      const radius = 10 + Math.random() * 20;
+      const theta = Math.random() * 2 * Math.PI;
+      const y = (Math.random() - 0.5) * 5;
+      temp[i] = Math.cos(theta) * radius;
+      temp[i + 1] = y;
+      temp[i + 2] = Math.sin(theta) * radius;
     }
+    return temp;
+  }, []);
+
+  useFrame((state) => {
+    group.current.rotation.y = state.clock.elapsedTime * 0.05;
   });
 
   return (
-    <mesh ref={ref}>
-      <torusGeometry args={[radius, thickness, 16, 64]} />
-      <meshBasicMaterial color={color} transparent opacity={0.6} />
+    <group ref={group} position={[0, -40, -15]}>
+      <points>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" count={count} array={particles} itemSize={3} />
+        </bufferGeometry>
+        <pointsMaterial size={0.05} color="#ffffff" transparent opacity={0.6} sizeAttenuation />
+      </points>
+    </group>
+  );
+}
+
+function OracleCore() {
+  const ref = useRef<THREE.Group>(null!);
+  useFrame((state) => {
+    ref.current.rotation.y = state.clock.elapsedTime * 0.5;
+    ref.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
+  });
+  return (
+    <group ref={ref} position={[0, -60, -5]}>
+      <mesh>
+        <icosahedronGeometry args={[2, 1]} />
+        <meshStandardMaterial color="#000000" emissive="#ffffff" emissiveIntensity={0.5} wireframe />
+      </mesh>
+      <mesh>
+        <icosahedronGeometry args={[1.5, 2]} />
+        <meshStandardMaterial color="#ffffff" transparent opacity={0.8} />
+      </mesh>
+    </group>
+  );
+}
+
+function HorizonObelisk() {
+  const ref = useRef<THREE.Mesh>(null!);
+  useFrame((state) => {
+    ref.current.position.y = Math.sin(state.clock.elapsedTime) * 0.5 - 80;
+  });
+  return (
+    <mesh ref={ref} position={[0, -80, -20]}>
+      <boxGeometry args={[2, 10, 2]} />
+      <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={0.2} metalness={0.9} roughness={0.1} />
     </mesh>
   );
 }
 
 /* ============================================ */
-/* Neural Network Visualization                  */
+/* Scroll Controller                             */
 /* ============================================ */
-function NeuralCore() {
-  const groupRef = useRef<THREE.Group>(null!);
+function ScrollCamera() {
+  const { camera } = useThree();
+  const targetPos = useRef(new THREE.Vector3(0, 0, 5));
   
-  const nodes = useMemo(() => {
-    const positions: [number, number, number][] = [];
-    // Create layered neural network structure
-    const layers = [4, 8, 12, 8, 4];
-    layers.forEach((count, li) => {
-      for (let i = 0; i < count; i++) {
-        const angle = (i / count) * Math.PI * 2;
-        const radius = 0.8 + li * 0.4;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
-        const z = (li - 2) * 0.6;
-        positions.push([x, y, z]);
-      }
-    });
-    return positions;
-  }, []);
+  useFrame(() => {
+    const scrollY = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = Math.max(0, Math.min(1, scrollY / maxScroll));
+    
+    // Scene y-positions map
+    // Hero: 0
+    // Architect: -20
+    // Nexus: -40
+    // Oracle: -60
+    // Horizon: -80
+    
+    const targetY = -(progress * 80);
+    const targetZ = 5 - Math.sin(progress * Math.PI * 4) * 2; // slight push in/out
 
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.15;
-      groupRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.1) * 0.1;
-    }
+    targetPos.current.set(0, targetY, targetZ);
+    camera.position.lerp(targetPos.current, 0.05);
+    camera.lookAt(0, targetY, -10);
   });
 
-  return (
-    <group ref={groupRef}>
-      {/* Central core */}
-      <mesh>
-        <icosahedronGeometry args={[0.5, 1]} />
-        <meshStandardMaterial
-          color="#7C3AED"
-          emissive="#7C3AED"
-          emissiveIntensity={0.8}
-          wireframe
-          transparent
-          opacity={0.6}
-        />
-      </mesh>
-      
-      {/* Neural nodes */}
-      {nodes.map((pos, i) => (
-        <mesh key={i} position={pos}>
-          <sphereGeometry args={[0.04, 8, 8]} />
-          <meshBasicMaterial color={i % 3 === 0 ? '#00E5FF' : i % 3 === 1 ? '#7C3AED' : '#22D3EE'} />
-        </mesh>
-      ))}
-
-      {/* Energy rings */}
-      <EnergyRing radius={1.5} color="#00E5FF" speed={0.5} thickness={0.015} />
-      <EnergyRing radius={2.0} color="#7C3AED" speed={-0.3} thickness={0.01} />
-      <EnergyRing radius={2.5} color="#22D3EE" speed={0.2} thickness={0.008} />
-    </group>
-  );
-}
-
-/* ============================================ */
-/* Data Stream Lines                             */
-/* ============================================ */
-function DataStreams({ count = 20 }: { count?: number }) {
-  const linesRef = useRef<THREE.Group>(null!);
-
-  const lineObjects = useMemo(() => {
-    return Array.from({ length: count }, (_, i) => {
-      const points = [];
-      const startAngle = Math.random() * Math.PI * 2;
-      const startRadius = 4 + Math.random() * 2;
-      for (let j = 0; j < 20; j++) {
-        const t = j / 19;
-        const angle = startAngle + t * Math.PI * 0.5;
-        const radius = startRadius * (1 - t * 0.8);
-        points.push(new THREE.Vector3(
-          Math.cos(angle) * radius,
-          (Math.random() - 0.5) * 2,
-          Math.sin(angle) * radius
-        ));
-      }
-      const geometry = new THREE.BufferGeometry().setFromPoints(points);
-      const material = new THREE.LineBasicMaterial({
-        color: i % 2 === 0 ? '#00E5FF' : '#7C3AED',
-        transparent: true,
-        opacity: 0.3,
-      });
-      return new THREE.Line(geometry, material);
-    });
-  }, [count]);
-
-  useFrame((state) => {
-    if (linesRef.current) {
-      linesRef.current.rotation.y = state.clock.elapsedTime * 0.05;
-    }
-  });
-
-  return (
-    <group ref={linesRef}>
-      {lineObjects.map((lineObj, i) => (
-        <primitive key={i} object={lineObj} />
-      ))}
-    </group>
-  );
+  return null;
 }
 
 /* ============================================ */
 /* Main Scene Container                          */
 /* ============================================ */
-export default function SceneContainer({ variant = 'hero' }: { variant?: 'hero' | 'core' | 'galaxy' | 'minimal' }) {
+export default function SceneContainer({ isFixedScroll = false }: { isFixedScroll?: boolean }) {
   return (
     <Canvas
-      camera={{ position: [0, 0, 6], fov: 60 }}
-      dpr={[1, 1.5]}
-      gl={{ antialias: true, alpha: true }}
-      style={{ position: 'absolute', inset: 0 }}
+      camera={{ position: [0, 0, 5], fov: 60 }}
+      dpr={[1, 2]}
+      gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping }}
+      style={{ position: isFixedScroll ? 'fixed' : 'absolute', inset: 0, pointerEvents: 'none', zIndex: -1 }}
     >
-      <ambientLight intensity={0.2} />
-      <pointLight position={[5, 5, 5]} intensity={0.8} color="#00E5FF" />
-      <pointLight position={[-5, -3, 3]} intensity={0.4} color="#7C3AED" />
+      <color attach="background" args={['#000000']} />
+      
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[10, 10, 5]} intensity={2} color="#ffffff" />
+      <directionalLight position={[-10, -10, -5]} intensity={0.5} color="#aaaaaa" />
 
-      {variant === 'hero' && (
+      <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
+      
+      {isFixedScroll ? (
         <>
-          <Stars radius={100} depth={50} count={3000} factor={3} saturation={0} fade speed={1} />
-          <NeuralCore />
-          <ParticleFieldMesh count={150} color="#00E5FF" size={0.02} spread={8} speed={0.1} />
-          <DataStreams count={15} />
+          <ScrollCamera />
+          <HeroObject />
+          <ArchitectStructure />
+          <NexusGalaxy />
+          <OracleCore />
+          <HorizonObelisk />
         </>
+      ) : (
+        // For minimal scenes like dashboard
+        <OracleCore />
       )}
 
-      {variant === 'core' && (
-        <>
-          <NeuralCore />
-          <ParticleFieldMesh count={300} color="#7C3AED" size={0.015} spread={6} speed={0.15} />
-          <EnergyRing radius={3} color="#00E5FF" speed={0.8} />
-          <EnergyRing radius={3.5} color="#7C3AED" speed={-0.6} />
-        </>
-      )}
-
-      {variant === 'galaxy' && (
-        <>
-          <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={0.5} />
-          <ParticleFieldMesh count={500} color="#22D3EE" size={0.025} spread={12} speed={0.08} />
-          <GlowingSphere position={[2, 1, -1]} color="#00E5FF" scale={0.6} />
-          <GlowingSphere position={[-2, -1, 0]} color="#7C3AED" scale={0.4} />
-          <GlowingSphere position={[0, 2, -2]} color="#22D3EE" scale={0.3} />
-        </>
-      )}
-
-      {variant === 'minimal' && (
-        <>
-          <ParticleFieldMesh count={100} color="#00E5FF" size={0.015} spread={10} speed={0.05} />
-        </>
-      )}
-
-      <EffectComposer>
-        <Bloom
-          luminanceThreshold={0.2}
-          luminanceSmoothing={0.9}
-          intensity={1.2}
-        />
+      <EffectComposer disableNormalPass>
+        <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} intensity={1.5} />
+        <Noise opacity={0.15} />
+        <Vignette eskil={false} offset={0.1} darkness={1.1} />
       </EffectComposer>
     </Canvas>
   );
 }
-
-export { ParticleFieldMesh, GlowingSphere, EnergyRing, NeuralCore, DataStreams };

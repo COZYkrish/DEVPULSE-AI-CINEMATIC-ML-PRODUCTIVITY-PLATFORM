@@ -1,7 +1,7 @@
-import { useMemo, Suspense, useRef, useEffect, useState } from 'react';
+import { useMemo, Suspense, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { BarChart3, TrendingUp, Layers, PieChart, Brain, Moon, Code2, Coffee } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter, LineChart, Line, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Cell, AreaChart, Area } from 'recharts';
+import { BarChart3, TrendingUp, Layers, PieChart, Brain, Moon, Code2, Activity } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, AreaChart, Area } from 'recharts';
 import PageTransition from '@/components/animations/PageTransition';
 import SceneContainer from '@/components/3d/SceneContainer';
 
@@ -24,10 +24,11 @@ function RevealSection({ children, className = '', delay = 0 }: { children: Reac
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="glass rounded-lg p-3 text-xs shadow-xl" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
-      <p style={{ color: '#F1F5F9', fontFamily: 'Space Grotesk, sans-serif', fontWeight: 600 }}>{label}</p>
+    <div className="bg-black/90 p-3 text-xs shadow-xl backdrop-blur-md" style={{ border: '1px solid rgba(255,255,255,0.2)' }}>
+      <p style={{ color: '#F1F5F9', fontFamily: 'Space Grotesk, sans-serif', fontWeight: 600, textTransform: 'uppercase' }}>{label}</p>
+      <div className="w-full h-px bg-white/20 my-2" />
       {payload.map((entry: any, i: number) => (
-        <p key={i} style={{ color: entry.color || '#94A3B8', fontFamily: 'JetBrains Mono, monospace' }}>
+        <p key={i} style={{ color: entry.color || '#FFFFFF', fontFamily: 'JetBrains Mono, monospace' }}>
           {entry.name}: {typeof entry.value === 'number' ? entry.value.toFixed(2) : entry.value}
         </p>
       ))}
@@ -38,15 +39,15 @@ function CustomTooltip({ active, payload, label }: any) {
 /* ============================================ */
 /* Section Header                                */
 /* ============================================ */
-function SectionHeader({ icon: Icon, title, description, color }: { icon: React.ComponentType<{ className?: string, style?: React.CSSProperties }>; title: string; description: string; color: string }) {
+function SectionHeader({ icon: Icon, title, description }: { icon: React.ComponentType<{ className?: string, style?: React.CSSProperties }>; title: string; description: string; }) {
   return (
     <div className="flex items-start gap-4 mb-6">
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${color}15`, border: `1px solid ${color}25` }}>
-        <Icon className="w-5 h-5" style={{ color: color }} />
+      <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 border border-white/20 bg-white/5">
+        <Icon className="w-5 h-5 text-white" />
       </div>
       <div>
-        <h3 className="text-xl font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>{title}</h3>
-        <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>{description}</p>
+        <h3 className="text-xl font-bold uppercase tracking-wide" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#FFFFFF' }}>{title}</h3>
+        <p className="text-xs mt-1 uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono, monospace' }}>{description}</p>
       </div>
     </div>
   );
@@ -83,8 +84,8 @@ function useAnalyticsData() {
 
     // Success distribution
     const successDist = [
-      { label: 'Success', value: 285, fill: '#10B981' },
-      { label: 'Failure', value: 216, fill: '#EF4444' },
+      { label: 'Success', value: 285, fill: '#FFFFFF' },
+      { label: 'Failure', value: 216, fill: '#555555' },
     ];
 
     // Sleep vs Success
@@ -130,49 +131,54 @@ export default function AnalyticsPage() {
 
   const chartColors = {
     grid: 'rgba(255,255,255,0.05)',
-    axis: '#64748B',
-    primary: '#00E5FF',
-    secondary: '#7C3AED',
-    accent: '#22D3EE',
-    success: '#10B981',
-    danger: '#EF4444',
+    axis: '#888888',
+    primary: '#FFFFFF',
+    secondary: '#AAAAAA',
+    accent: '#555555',
+    success: '#FFFFFF',
+    danger: '#333333',
   };
 
   return (
     <PageTransition>
-      <div className="min-h-screen pt-24 pb-32 overflow-hidden">
-        <div className="container">
+      <div className="min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
+        <div className="vignette-overlay" />
+        <div className="noise-overlay" />
+        <div className="film-lines" />
+        <div className="container relative z-10">
+          
           {/* Hero */}
-          <div className="relative h-64 rounded-3xl overflow-hidden mb-12" style={{ border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div className="relative h-64 overflow-hidden mb-12 border border-white/20 bg-black">
             <Suspense fallback={null}>
-              <SceneContainer variant="galaxy" />
+              <SceneContainer isFixedScroll={false} />
             </Suspense>
-            <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'radial-gradient(ellipse, rgba(5,8,22,0.5), rgba(5,8,22,0.9))' }}>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
               <div className="text-center">
                 <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl sm:text-4xl font-bold mb-2" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
+                  className="text-4xl sm:text-5xl font-light mb-2 uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#FFFFFF' }}>
                   Data Observatory
                 </motion.h1>
                 <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-                  className="text-sm" style={{ color: '#94A3B8' }}>
+                  className="text-xs uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono, monospace' }}>
                   Explore the patterns hidden within 501 developer productivity records
                 </motion.p>
               </div>
             </div>
+            <div className="scan-line" />
           </div>
 
           {/* Dataset Overview Stats */}
           <RevealSection className="mb-12">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-white/20 border border-white/20">
               {[
-                { label: 'Total Records', value: '501', color: '#00E5FF' },
-                { label: 'Features', value: '8', color: '#7C3AED' },
-                { label: 'Success Rate', value: '56.9%', color: '#10B981' },
-                { label: 'Binary Target', value: 'task_success', color: '#F59E0B' },
+                { label: 'Total Records', value: '501' },
+                { label: 'Features', value: '8' },
+                { label: 'Success Rate', value: '56.9%' },
+                { label: 'Binary Target', value: 'task_success' },
               ].map((s) => (
-                <div key={s.label} className="glass rounded-xl p-4 text-center card-hover">
-                  <div className="text-2xl font-bold mb-1" style={{ fontFamily: 'JetBrains Mono, monospace', color: s.color }}>{s.value}</div>
-                  <div className="text-xs" style={{ color: '#94A3B8' }}>{s.label}</div>
+                <div key={s.label} className="bg-black p-6 text-center hover:bg-white/5 transition-colors">
+                  <div className="text-2xl font-light mb-2" style={{ fontFamily: 'JetBrains Mono, monospace', color: '#FFFFFF' }}>{s.value}</div>
+                  <div className="text-[10px] tracking-widest uppercase" style={{ color: '#888888', fontFamily: 'JetBrains Mono, monospace' }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -180,16 +186,17 @@ export default function AnalyticsPage() {
 
           {/* Feature Importance */}
           <RevealSection className="mb-12">
-            <div className="glass rounded-2xl p-6">
-              <SectionHeader icon={BarChart3} title="Feature Importance" description="Relative importance of each feature in predicting task success" color="#00E5FF" />
-              <div className="h-80">
+            <div className="p-6 border border-white/20 bg-black/50 backdrop-blur-sm relative overflow-hidden">
+              <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
+              <SectionHeader icon={BarChart3} title="Feature Importance" description="Relative importance of each feature in predicting task success" />
+              <div className="h-80 relative z-10">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={data.featureStats} layout="vertical" margin={{ left: 80 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} horizontal={false} />
-                    <XAxis type="number" stroke={chartColors.axis} tick={{ fontSize: 11, fontFamily: 'JetBrains Mono' }} domain={[0, 0.25]} />
-                    <YAxis type="category" dataKey="feature" stroke={chartColors.axis} tick={{ fontSize: 11, fontFamily: 'Inter' }} width={90} />
+                    <CartesianGrid strokeDasharray="1 4" stroke={chartColors.grid} horizontal={false} />
+                    <XAxis type="number" stroke={chartColors.axis} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} domain={[0, 0.25]} />
+                    <YAxis type="category" dataKey="feature" stroke={chartColors.axis} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} width={90} />
                     <Tooltip content={<CustomTooltip />} />
-                    <Bar dataKey="importance" radius={[0, 6, 6, 0]} maxBarSize={24}>
+                    <Bar dataKey="importance" maxBarSize={20}>
                       {data.featureStats.map((_, i) => (
                         <Cell key={i} fill={i < 3 ? chartColors.primary : i < 5 ? chartColors.secondary : chartColors.accent} />
                       ))}
@@ -203,16 +210,17 @@ export default function AnalyticsPage() {
           {/* Correlation + Success Distribution */}
           <div className="grid lg:grid-cols-2 gap-6 mb-12">
             <RevealSection>
-              <div className="glass rounded-2xl p-6 h-full">
-                <SectionHeader icon={Layers} title="Feature Correlation" description="How each feature correlates with task success" color="#7C3AED" />
-                <div className="h-72">
+              <div className="p-6 h-full border border-white/20 bg-black/50 backdrop-blur-sm relative overflow-hidden">
+                <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
+                <SectionHeader icon={Layers} title="Feature Correlation" description="How each feature correlates with task success" />
+                <div className="h-72 relative z-10">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data.correlations} margin={{ left: 10 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} />
-                      <XAxis dataKey="f1" stroke={chartColors.axis} tick={{ fontSize: 10, fontFamily: 'Inter' }} angle={-30} textAnchor="end" height={60} />
-                      <YAxis stroke={chartColors.axis} tick={{ fontSize: 11, fontFamily: 'JetBrains Mono' }} domain={[-0.4, 0.6]} />
+                      <CartesianGrid strokeDasharray="1 4" stroke={chartColors.grid} />
+                      <XAxis dataKey="f1" stroke={chartColors.axis} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} angle={-30} textAnchor="end" height={60} />
+                      <YAxis stroke={chartColors.axis} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} domain={[-0.4, 0.6]} />
                       <Tooltip content={<CustomTooltip />} />
-                      <Bar dataKey="value" radius={[6, 6, 0, 0]} maxBarSize={30}>
+                      <Bar dataKey="value" maxBarSize={24}>
                         {data.correlations.map((d, i) => (
                           <Cell key={i} fill={d.value >= 0 ? chartColors.success : chartColors.danger} />
                         ))}
@@ -224,22 +232,22 @@ export default function AnalyticsPage() {
             </RevealSection>
 
             <RevealSection delay={0.1}>
-              <div className="glass rounded-2xl p-6 h-full">
-                <SectionHeader icon={PieChart} title="Success Distribution" description="Overall task success vs failure in the dataset" color="#10B981" />
-                <div className="flex items-center justify-center h-72">
-                  <div className="flex items-center gap-12">
+              <div className="p-6 h-full border border-white/20 bg-black/50 backdrop-blur-sm relative overflow-hidden">
+                <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
+                <SectionHeader icon={PieChart} title="Success Distribution" description="Overall task success vs failure in the dataset" />
+                <div className="flex items-center justify-center h-72 relative z-10">
+                  <div className="flex flex-col sm:flex-row items-center gap-12">
                     {data.successDist.map((d) => (
                       <div key={d.label} className="text-center">
-                        <div className="w-28 h-28 rounded-full flex items-center justify-center mb-3" style={{
+                        <div className="w-28 h-28 flex items-center justify-center mb-3" style={{
                           background: `conic-gradient(${d.fill} ${(d.value / 501) * 360}deg, rgba(255,255,255,0.05) 0deg)`,
-                          boxShadow: `0 0 30px ${d.fill}30`,
                         }}>
-                          <div className="w-20 h-20 rounded-full flex items-center justify-center" style={{ background: '#0F172A' }}>
-                            <span className="text-xl font-bold" style={{ fontFamily: 'JetBrains Mono, monospace', color: d.fill }}>{d.value}</span>
+                          <div className="w-24 h-24 flex items-center justify-center bg-black border border-white/10">
+                            <span className="text-xl font-light" style={{ fontFamily: 'JetBrains Mono, monospace', color: d.fill }}>{d.value}</span>
                           </div>
                         </div>
-                        <span className="text-sm font-medium" style={{ color: d.fill }}>{d.label}</span>
-                        <p className="text-xs mt-0.5" style={{ color: '#64748B' }}>{((d.value / 501) * 100).toFixed(1)}%</p>
+                        <span className="text-[10px] uppercase tracking-widest" style={{ color: d.fill, fontFamily: 'JetBrains Mono, monospace' }}>{d.label}</span>
+                        <p className="text-[10px] mt-0.5" style={{ color: '#666666', fontFamily: 'JetBrains Mono, monospace' }}>{((d.value / 501) * 100).toFixed(1)}%</p>
                       </div>
                     ))}
                   </div>
@@ -251,22 +259,23 @@ export default function AnalyticsPage() {
           {/* Sleep Impact + Coding Hours */}
           <div className="grid lg:grid-cols-2 gap-6 mb-12">
             <RevealSection>
-              <div className="glass rounded-2xl p-6 h-full">
-                <SectionHeader icon={Moon} title="Sleep Impact Analysis" description="How sleep hours affect task success probability" color="#7C3AED" />
-                <div className="h-72">
+              <div className="p-6 h-full border border-white/20 bg-black/50 backdrop-blur-sm relative overflow-hidden">
+                <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
+                <SectionHeader icon={Moon} title="Sleep Impact Analysis" description="How sleep hours affect task success probability" />
+                <div className="h-72 relative z-10">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={data.sleepImpact}>
                       <defs>
                         <linearGradient id="sleepGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#7C3AED" stopOpacity={0.3} />
-                          <stop offset="100%" stopColor="#7C3AED" stopOpacity={0} />
+                          <stop offset="0%" stopColor="#FFFFFF" stopOpacity={0.2} />
+                          <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} />
-                      <XAxis dataKey="sleep" stroke={chartColors.axis} tick={{ fontSize: 11, fontFamily: 'Inter' }} />
-                      <YAxis stroke={chartColors.axis} tick={{ fontSize: 11, fontFamily: 'JetBrains Mono' }} />
+                      <CartesianGrid strokeDasharray="1 4" stroke={chartColors.grid} />
+                      <XAxis dataKey="sleep" stroke={chartColors.axis} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} />
+                      <YAxis stroke={chartColors.axis} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} />
                       <Tooltip content={<CustomTooltip />} />
-                      <Area type="monotone" dataKey="success" stroke="#7C3AED" fill="url(#sleepGrad)" strokeWidth={2} name="Success %" />
+                      <Area type="step" dataKey="success" stroke="#FFFFFF" fill="url(#sleepGrad)" strokeWidth={1} name="Success %" />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
@@ -274,16 +283,17 @@ export default function AnalyticsPage() {
             </RevealSection>
 
             <RevealSection delay={0.1}>
-              <div className="glass rounded-2xl p-6 h-full">
-                <SectionHeader icon={Code2} title="Coding Hours Analysis" description="Optimal coding hours for maximum productivity" color="#00E5FF" />
-                <div className="h-72">
+              <div className="p-6 h-full border border-white/20 bg-black/50 backdrop-blur-sm relative overflow-hidden">
+                <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
+                <SectionHeader icon={Code2} title="Coding Hours Analysis" description="Optimal coding hours for maximum productivity" />
+                <div className="h-72 relative z-10">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data.codingImpact}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} />
-                      <XAxis dataKey="hours" stroke={chartColors.axis} tick={{ fontSize: 11, fontFamily: 'Inter' }} />
-                      <YAxis stroke={chartColors.axis} tick={{ fontSize: 11, fontFamily: 'JetBrains Mono' }} />
+                      <CartesianGrid strokeDasharray="1 4" stroke={chartColors.grid} />
+                      <XAxis dataKey="hours" stroke={chartColors.axis} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} />
+                      <YAxis stroke={chartColors.axis} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} />
                       <Tooltip content={<CustomTooltip />} />
-                      <Bar dataKey="success" fill="#00E5FF" radius={[6, 6, 0, 0]} maxBarSize={40} name="Success %" />
+                      <Bar dataKey="success" fill="#FFFFFF" maxBarSize={30} name="Success %" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -293,22 +303,23 @@ export default function AnalyticsPage() {
 
           {/* AI Usage Analysis */}
           <RevealSection className="mb-12">
-            <div className="glass rounded-2xl p-6">
-              <SectionHeader icon={Brain} title="AI Usage Analysis" description="Impact of AI tool usage on developer success rates" color="#22D3EE" />
-              <div className="h-72">
+            <div className="p-6 border border-white/20 bg-black/50 backdrop-blur-sm relative overflow-hidden">
+              <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
+              <SectionHeader icon={Brain} title="AI Usage Analysis" description="Impact of AI tool usage on developer success rates" />
+              <div className="h-72 relative z-10">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={data.aiUsageImpact}>
                     <defs>
                       <linearGradient id="aiGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#22D3EE" stopOpacity={0.3} />
-                        <stop offset="100%" stopColor="#22D3EE" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#FFFFFF" stopOpacity={0.2} />
+                        <stop offset="100%" stopColor="#FFFFFF" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} />
-                    <XAxis dataKey="hours" stroke={chartColors.axis} tick={{ fontSize: 11, fontFamily: 'Inter' }} label={{ value: 'AI Usage Hours', position: 'insideBottom', offset: -5, fill: '#64748B' }} />
-                    <YAxis stroke={chartColors.axis} tick={{ fontSize: 11, fontFamily: 'JetBrains Mono' }} label={{ value: 'Success Rate %', angle: -90, position: 'insideLeft', fill: '#64748B' }} />
+                    <CartesianGrid strokeDasharray="1 4" stroke={chartColors.grid} />
+                    <XAxis dataKey="hours" stroke={chartColors.axis} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} />
+                    <YAxis stroke={chartColors.axis} tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} />
                     <Tooltip content={<CustomTooltip />} />
-                    <Area type="monotone" dataKey="rate" stroke="#22D3EE" fill="url(#aiGrad)" strokeWidth={2} name="Success Rate" />
+                    <Area type="linear" dataKey="rate" stroke="#FFFFFF" fill="url(#aiGrad)" strokeWidth={1} name="Success Rate" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>

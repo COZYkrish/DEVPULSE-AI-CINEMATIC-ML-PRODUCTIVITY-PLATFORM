@@ -26,15 +26,15 @@ function ScoreGauge({ value, max = 100, label, color, size = 120 }: {
   return (
     <div className="flex flex-col items-center">
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size/2} cy={size/2} r={radius} stroke="rgba(255,255,255,0.05)" strokeWidth={6} fill="none" />
-        <motion.circle cx={size/2} cy={size/2} r={radius} stroke={color} strokeWidth={6} fill="none" strokeLinecap="round"
+        <circle cx={size/2} cy={size/2} r={radius} stroke="rgba(255,255,255,0.05)" strokeWidth={2} fill="none" />
+        <motion.circle cx={size/2} cy={size/2} r={radius} stroke={color} strokeWidth={2} fill="none"
           initial={{ strokeDashoffset: circ } as any} animate={{ strokeDashoffset: circ - pct * circ } as any}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }} strokeDasharray={circ}
           style={{ filter: `drop-shadow(0 0 6px ${color}40)` }} />
       </svg>
       <div className="absolute flex flex-col items-center justify-center" style={{ width: size, height: size }}>
-        <span className="text-2xl font-bold" style={{ fontFamily: 'JetBrains Mono', color }}>{Math.round(value)}</span>
-        <span className="text-[9px]" style={{ color: '#64748B' }}>{label}</span>
+        <span className="text-3xl font-light" style={{ fontFamily: 'JetBrains Mono', color }}>{Math.round(value)}</span>
+        <span className="text-[10px] uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>{label}</span>
       </div>
     </div>
   );
@@ -45,33 +45,36 @@ function LabTool({ icon: Icon, title, description, color, children }: {
   icon: React.ComponentType<{ className?: string, style?: React.CSSProperties }>; title: string; description: string; color: string; children: React.ReactNode;
 }) {
   return (
-    <div className="glass rounded-2xl p-6 card-hover h-full">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${color}15`, border: `1px solid ${color}25` }}>
-          <Icon className="w-5 h-5" style={{ color: color }} />
+    <div className="border border-white/20 bg-black/60 p-6 hover:bg-white/5 transition-colors h-full group relative overflow-hidden">
+      <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
+      <div className="flex items-center gap-4 mb-6 relative z-10">
+        <div className="w-10 h-10 flex items-center justify-center border border-white/20 bg-white/5 group-hover:bg-white transition-colors">
+          <Icon className="w-5 h-5 text-white group-hover:text-black transition-colors" />
         </div>
         <div>
-          <h3 className="text-lg font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>{title}</h3>
-          <p className="text-[11px]" style={{ color: '#94A3B8' }}>{description}</p>
+          <h3 className="text-lg font-light uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#FFFFFF' }}>{title}</h3>
+          <p className="text-[10px] uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>{description}</p>
         </div>
       </div>
-      {children}
+      <div className="relative z-10">
+        {children}
+      </div>
     </div>
   );
 }
 
-function SimpleSlider({ label, value, onChange, min, max, step, color = '#00E5FF' }: {
+function SimpleSlider({ label, value, onChange, min, max, step, color = '#FFFFFF' }: {
   label: string; value: number; onChange: (v: number) => void; min: number; max: number; step: number; color?: string;
 }) {
   const pct = ((value - min) / (max - min)) * 100;
   return (
     <div className="flex items-center gap-3 mb-2">
-      <span className="text-xs w-28 flex-shrink-0" style={{ color: '#94A3B8' }}>{label}</span>
+      <span className="text-[10px] uppercase tracking-widest w-28 flex-shrink-0" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>{label}</span>
       <input type="range" min={min} max={max} step={step} value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer"
-        style={{ background: `linear-gradient(to right, ${color} ${pct}%, rgba(255,255,255,0.1) ${pct}%)` }} />
-      <span className="text-xs w-10 text-right font-bold" style={{ fontFamily: 'JetBrains Mono', color: '#F1F5F9' }}>
+        className="flex-1 h-px appearance-none cursor-pointer bg-white/10"
+        style={{ backgroundImage: `linear-gradient(to right, ${color} ${pct}%, transparent ${pct}%)` }} />
+      <span className="text-[10px] w-10 text-right font-bold" style={{ fontFamily: 'JetBrains Mono', color: '#FFFFFF' }}>
         {Number.isInteger(step) ? value : value.toFixed(1)}
       </span>
     </div>
@@ -116,115 +119,124 @@ export default function DeveloperLabPage() {
     setHabitResult(probability);
   }, [habitInputs]);
 
+  const monochromeScale = (val: number, reverse = false) => {
+    const target = reverse ? 100 - val : val;
+    return target > 70 ? '#FFFFFF' : target > 40 ? '#AAAAAA' : '#555555';
+  };
+
   return (
     <PageTransition>
-      <div className="min-h-screen pt-24 pb-32 overflow-hidden">
-        <div className="container">
+      <div className="min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
+        <div className="vignette-overlay" />
+        <div className="noise-overlay" />
+        <div className="film-lines" />
+        
+        <div className="container relative z-10">
           {/* Header */}
-          <div className="text-center mb-12">
-            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}
-              className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4"
-              style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.2), rgba(0,229,255,0.2))', border: '1px solid rgba(16,185,129,0.2)' }}>
-              <FlaskConical className="w-7 h-7" style={{ color: '#10B981' }} />
-            </motion.div>
+          <div className="text-center mb-12 border-b border-white/20 pb-8">
+            <div className="text-[10px] tracking-widest text-gray-500 mb-2 uppercase" style={{ fontFamily: 'JetBrains Mono' }}>
+              // Subsystem: Experimental
+            </div>
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              className="text-3xl sm:text-4xl font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
+              className="text-4xl sm:text-5xl font-light uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
               Developer Lab
             </motion.h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-              className="text-sm mt-2" style={{ color: '#94A3B8' }}>
+              className="text-[10px] uppercase tracking-widest mt-4" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>
               Personal optimization tools powered by machine learning
             </motion.p>
           </div>
 
           {/* Tools Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Focus Score */}
             <RevealSection>
-              <LabTool icon={Focus} title="Focus Score" description="Calculate your focus quality" color="#00E5FF">
-                <div className="flex justify-center my-4 relative">
-                  <ScoreGauge value={focusScore} label="FOCUS" color={focusScore > 60 ? '#10B981' : focusScore > 30 ? '#F59E0B' : '#EF4444'} />
+              <LabTool icon={Focus} title="Focus Index" description="Calculate cognitive focus quality" color="#FFFFFF">
+                <div className="flex justify-center my-6 relative">
+                  <ScoreGauge value={focusScore} label="INDEX" color={monochromeScale(focusScore)} />
                 </div>
-                <SimpleSlider label="Distractions" value={focusDistractions} onChange={setFocusDistractions} min={0} max={10} step={1} color="#EF4444" />
-                <SimpleSlider label="Cognitive Load" value={focusCogLoad} onChange={setFocusCogLoad} min={0} max={10} step={0.5} color="#F59E0B" />
+                <SimpleSlider label="Distractions" value={focusDistractions} onChange={setFocusDistractions} min={0} max={10} step={1} color="#FFFFFF" />
+                <SimpleSlider label="Cognitive Load" value={focusCogLoad} onChange={setFocusCogLoad} min={0} max={10} step={0.5} color="#FFFFFF" />
               </LabTool>
             </RevealSection>
 
             {/* Burnout Predictor */}
             <RevealSection delay={0.1}>
-              <LabTool icon={AlertTriangle} title="Burnout Predictor" description="Assess your burnout risk level" color="#EF4444">
-                <div className="flex justify-center my-4 relative">
-                  <ScoreGauge value={burnoutRisk} label="RISK" color={burnoutRisk < 30 ? '#10B981' : burnoutRisk < 60 ? '#F59E0B' : '#EF4444'} />
+              <LabTool icon={AlertTriangle} title="Burnout Risk" description="Assess fatigue probability" color="#FFFFFF">
+                <div className="flex justify-center my-6 relative">
+                  <ScoreGauge value={burnoutRisk} label="RISK" color={monochromeScale(burnoutRisk, true)} />
                 </div>
-                <SimpleSlider label="Sleep" value={burnoutInputs.sleep_hours} onChange={(v) => setBurnoutInputs({...burnoutInputs, sleep_hours: v})} min={3} max={10} step={0.5} color="#7C3AED" />
-                <SimpleSlider label="Cognitive Load" value={burnoutInputs.cognitive_load} onChange={(v) => setBurnoutInputs({...burnoutInputs, cognitive_load: v})} min={0} max={10} step={0.5} color="#EF4444" />
-                <SimpleSlider label="Hours Coding" value={burnoutInputs.hours_coding} onChange={(v) => setBurnoutInputs({...burnoutInputs, hours_coding: v})} min={0} max={12} step={0.5} color="#00E5FF" />
+                <SimpleSlider label="Sleep" value={burnoutInputs.sleep_hours} onChange={(v) => setBurnoutInputs({...burnoutInputs, sleep_hours: v})} min={3} max={10} step={0.5} color="#FFFFFF" />
+                <SimpleSlider label="Cog. Load" value={burnoutInputs.cognitive_load} onChange={(v) => setBurnoutInputs({...burnoutInputs, cognitive_load: v})} min={0} max={10} step={0.5} color="#FFFFFF" />
+                <SimpleSlider label="Hrs Coding" value={burnoutInputs.hours_coding} onChange={(v) => setBurnoutInputs({...burnoutInputs, hours_coding: v})} min={0} max={12} step={0.5} color="#FFFFFF" />
               </LabTool>
             </RevealSection>
 
             {/* Sleep Optimizer */}
             <RevealSection delay={0.2}>
-              <LabTool icon={Moon} title="Sleep Optimizer" description="Find your optimal sleep hours" color="#7C3AED">
-                <div className="flex justify-center my-4 relative">
-                  <ScoreGauge value={sleepScore} label="QUALITY" color={sleepScore > 70 ? '#10B981' : sleepScore > 40 ? '#F59E0B' : '#EF4444'} />
+              <LabTool icon={Moon} title="Sleep Engine" description="Optimize rest metrics" color="#FFFFFF">
+                <div className="flex justify-center my-6 relative">
+                  <ScoreGauge value={sleepScore} label="QUALITY" color={monochromeScale(sleepScore)} />
                 </div>
-                <SimpleSlider label="Sleep Hours" value={sleepHours} onChange={setSleepHours} min={3} max={10} step={0.5} color="#7C3AED" />
-                <div className="mt-3 p-2 rounded-lg text-[10px]" style={{ background: 'rgba(255,255,255,0.03)', color: '#94A3B8' }}>
-                  {sleepHours >= 7 && sleepHours <= 8 ? '✅ Optimal sleep range for peak cognitive performance.' :
-                   sleepHours < 6 ? '⚠️ Critical: Less than 6 hours significantly impairs decision-making.' :
-                   sleepHours > 9 ? '💡 Oversleeping may indicate other health concerns.' :
-                   '💡 Try to aim for 7-8 hours for best results.'}
+                <SimpleSlider label="Sleep Hours" value={sleepHours} onChange={setSleepHours} min={3} max={10} step={0.5} color="#FFFFFF" />
+                <div className="mt-4 p-3 border border-white/20 text-[10px] bg-white/5" style={{ color: '#AAAAAA', fontFamily: 'JetBrains Mono' }}>
+                  {sleepHours >= 7 && sleepHours <= 8 ? 'SYSTEM: Optimal range for peak cognitive performance.' :
+                   sleepHours < 6 ? 'WARNING: Less than 6 hours impairs decision-making.' :
+                   sleepHours > 9 ? 'NOTICE: Excess rest may indicate systemic fatigue.' :
+                   'SYSTEM: Suggest targeting 7-8 hours for optimal results.'}
                 </div>
               </LabTool>
             </RevealSection>
 
             {/* Coding Efficiency */}
             <RevealSection delay={0.3}>
-              <LabTool icon={Code2} title="Coding Efficiency" description="Commits per hour of coding" color="#10B981">
-                <div className="flex justify-center my-4 relative">
-                  <ScoreGauge value={efficiency} label="EFFICIENCY" color={efficiency > 60 ? '#10B981' : efficiency > 30 ? '#F59E0B' : '#EF4444'} />
+              <LabTool icon={Code2} title="Output Efficiency" description="Commits per hour density" color="#FFFFFF">
+                <div className="flex justify-center my-6 relative">
+                  <ScoreGauge value={efficiency} label="DENSITY" color={monochromeScale(efficiency)} />
                 </div>
-                <SimpleSlider label="Hours Coding" value={codingHours} onChange={setCodingHours} min={0} max={12} step={0.5} color="#00E5FF" />
-                <SimpleSlider label="Commits" value={codingCommits} onChange={setCodingCommits} min={0} max={15} step={1} color="#10B981" />
+                <SimpleSlider label="Coding Hrs" value={codingHours} onChange={setCodingHours} min={0} max={12} step={0.5} color="#FFFFFF" />
+                <SimpleSlider label="Commits" value={codingCommits} onChange={setCodingCommits} min={0} max={15} step={1} color="#FFFFFF" />
               </LabTool>
             </RevealSection>
 
             {/* AI Usage Analyzer */}
             <RevealSection delay={0.4}>
-              <LabTool icon={Sparkles} title="AI Usage Analyzer" description="Measure your AI multiplier effect" color="#22D3EE">
-                <div className="text-center my-4">
-                  <div className="text-4xl font-bold mb-1" style={{ fontFamily: 'JetBrains Mono', color: '#22D3EE' }}>{aiMultiplier}x</div>
-                  <div className="text-xs" style={{ color: '#64748B' }}>Productivity Multiplier</div>
+              <LabTool icon={Sparkles} title="AI Multiplier" description="Measure assistance effect" color="#FFFFFF">
+                <div className="text-center my-8">
+                  <div className="text-5xl font-light mb-2" style={{ fontFamily: 'JetBrains Mono', color: '#FFFFFF' }}>{aiMultiplier}x</div>
+                  <div className="text-[10px] uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>Productivity Multiplier</div>
                 </div>
-                <SimpleSlider label="AI Hours" value={aiHours} onChange={setAiHours} min={0} max={8} step={0.5} color="#22D3EE" />
-                <SimpleSlider label="Coding Hours" value={aiCodingHours} onChange={setAiCodingHours} min={0} max={12} step={0.5} color="#00E5FF" />
+                <div className="mt-8">
+                  <SimpleSlider label="AI Hrs" value={aiHours} onChange={setAiHours} min={0} max={8} step={0.5} color="#FFFFFF" />
+                  <SimpleSlider label="Coding Hrs" value={aiCodingHours} onChange={setAiCodingHours} min={0} max={12} step={0.5} color="#FFFFFF" />
+                </div>
               </LabTool>
             </RevealSection>
 
             {/* Habit Impact Simulator */}
             <RevealSection delay={0.5}>
-              <LabTool icon={TrendingUp} title="Habit Simulator" description="Simulate ideal work habits" color="#F59E0B">
-                <div className="text-center my-4">
+              <LabTool icon={TrendingUp} title="Habit Simulator" description="Simulate baseline performance" color="#FFFFFF">
+                <div className="text-center my-6">
                   {habitResult !== null ? (
                     <>
-                      <div className="text-4xl font-bold mb-1" style={{ fontFamily: 'JetBrains Mono', color: habitResult >= 0.7 ? '#10B981' : habitResult >= 0.4 ? '#F59E0B' : '#EF4444' }}>
+                      <div className="text-4xl font-light mb-2" style={{ fontFamily: 'JetBrains Mono', color: monochromeScale(habitResult * 100) }}>
                         {(habitResult * 100).toFixed(1)}%
                       </div>
-                      <div className="text-xs" style={{ color: '#64748B' }}>Success Probability</div>
+                      <div className="text-[10px] uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>Success Probability</div>
                     </>
                   ) : (
-                    <button onClick={runHabit} className="px-4 py-2 rounded-lg text-xs font-semibold"
-                      style={{ background: 'linear-gradient(135deg, #F59E0B, #F97316)', color: '#050816' }}>
-                      <Zap className="w-3.5 h-3.5 inline mr-1" /> Run Simulation
+                    <button onClick={runHabit} className="px-6 py-3 border border-white bg-white text-black text-[10px] uppercase tracking-widest font-bold hover:bg-black hover:text-white transition-colors"
+                      style={{ fontFamily: 'JetBrains Mono' }}>
+                      <Zap className="w-3 h-3 inline mr-2" /> Run Simulation
                     </button>
                   )}
                 </div>
-                <SimpleSlider label="Sleep" value={habitInputs.sleep_hours} onChange={(v) => { setHabitInputs({...habitInputs, sleep_hours: v}); setHabitResult(null); }} min={3} max={10} step={0.5} color="#7C3AED" />
-                <SimpleSlider label="Distractions" value={habitInputs.distractions} onChange={(v) => { setHabitInputs({...habitInputs, distractions: v}); setHabitResult(null); }} min={0} max={10} step={1} color="#EF4444" />
+                <SimpleSlider label="Sleep" value={habitInputs.sleep_hours} onChange={(v) => { setHabitInputs({...habitInputs, sleep_hours: v}); setHabitResult(null); }} min={3} max={10} step={0.5} color="#FFFFFF" />
+                <SimpleSlider label="Distractions" value={habitInputs.distractions} onChange={(v) => { setHabitInputs({...habitInputs, distractions: v}); setHabitResult(null); }} min={0} max={10} step={1} color="#FFFFFF" />
                 {habitResult === null && (
-                  <button onClick={runHabit} className="w-full mt-3 py-2 rounded-lg text-xs font-semibold"
-                    style={{ background: 'rgba(249,168,11,0.15)', color: '#F59E0B', border: '1px solid rgba(249,168,11,0.2)' }}>
-                    Predict
+                  <button onClick={runHabit} className="w-full mt-6 py-3 border border-white/20 text-[10px] uppercase tracking-widest hover:bg-white/10 transition-colors"
+                    style={{ color: '#FFFFFF', fontFamily: 'JetBrains Mono' }}>
+                    Predict Outcome
                   </button>
                 )}
               </LabTool>

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Zap, LayoutDashboard, BarChart3, Trophy, Brain, FlaskConical, Database, History, Info } from 'lucide-react';
+import { Menu, X, Zap, LayoutDashboard, BarChart3, Trophy, Brain, FlaskConical, Database, History, Info, Home } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navLinks = [
+  { path: '/', label: 'Home', icon: Home },
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/analytics', label: 'Analytics', icon: BarChart3 },
   { path: '/model-arena', label: 'Arena', icon: Trophy },

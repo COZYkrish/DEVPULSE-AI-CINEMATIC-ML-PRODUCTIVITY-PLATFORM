@@ -69,6 +69,7 @@ export default function DataExplorerPage() {
     const stats: Record<string, { mean: string; min: string; max: string; std: string }> = {};
     columns.forEach((col) => {
       const vals = data.map((r) => r[col]).filter((v) => typeof v === 'number') as number[];
+      if (vals.length === 0) return;
       const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
       const min = Math.min(...vals);
       const max = Math.max(...vals);
@@ -76,7 +77,7 @@ export default function DataExplorerPage() {
       stats[col] = { mean: mean.toFixed(2), min: min.toFixed(2), max: max.toFixed(2), std: std.toFixed(2) };
     });
     return stats;
-  }, [data]);
+  }, [data, columns]);
 
   const handleSort = (key: string) => {
     if (sortKey === key) setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
@@ -86,21 +87,24 @@ export default function DataExplorerPage() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen pt-24 pb-32 overflow-hidden">
-        <div className="container">
+      <div className="min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
+        <div className="vignette-overlay" />
+        <div className="noise-overlay" />
+        <div className="film-lines" />
+
+        <div className="container relative z-10">
           {/* Header */}
-          <div className="text-center mb-10">
+          <div className="text-center mb-12 border-b border-white/20 pb-8">
             <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring' }}
-              className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4"
-              style={{ background: 'linear-gradient(135deg, rgba(0,229,255,0.2), rgba(34,211,238,0.2))', border: '1px solid rgba(0,229,255,0.2)' }}>
-              <Database className="w-7 h-7" style={{ color: '#00E5FF' }} />
+              className="inline-flex items-center justify-center w-14 h-14 border border-white/20 bg-white/5 mb-6">
+              <Database className="w-6 h-6 text-white" />
             </motion.div>
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              className="text-3xl sm:text-4xl font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
+              className="text-4xl sm:text-5xl font-light uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
               Data Explorer
             </motion.h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-              className="text-sm mt-2" style={{ color: '#94A3B8' }}>
+              className="text-[10px] uppercase tracking-widest mt-4" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>
               Explore the developer productivity dataset
             </motion.p>
           </div>
@@ -108,12 +112,12 @@ export default function DataExplorerPage() {
           {/* Stats Row */}
           {stats && (
             <RevealSection className="mb-8">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-px bg-white/20 border border-white/20">
                 {Object.entries(stats).slice(0, 5).map(([key, s]) => (
-                  <div key={key} className="glass rounded-xl p-3 text-center">
-                    <div className="text-[10px] mb-1" style={{ color: '#64748B', fontFamily: 'JetBrains Mono' }}>{key.replace(/_/g, ' ')}</div>
-                    <div className="text-lg font-bold" style={{ fontFamily: 'JetBrains Mono', color: '#00E5FF' }}>{s.mean}</div>
-                    <div className="text-[9px]" style={{ color: '#64748B' }}>min: {s.min} · max: {s.max}</div>
+                  <div key={key} className="bg-black p-4 text-center hover:bg-white/5 transition-colors">
+                    <div className="text-[10px] uppercase tracking-widest mb-2" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>{key.replace(/_/g, ' ')}</div>
+                    <div className="text-2xl font-light mb-1" style={{ fontFamily: 'JetBrains Mono', color: '#FFFFFF' }}>{s.mean}</div>
+                    <div className="text-[9px] uppercase tracking-widest" style={{ color: '#555555', fontFamily: 'JetBrains Mono' }}>min: {s.min} · max: {s.max}</div>
                   </div>
                 ))}
               </div>
@@ -122,55 +126,57 @@ export default function DataExplorerPage() {
 
           {/* Controls */}
           <RevealSection className="mb-6">
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-wrap items-center gap-4">
               <div className="relative flex-1 min-w-[200px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#64748B' }} />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#888888' }} />
                 <input
-                  type="text" placeholder="Search values..." value={search}
+                  type="text" placeholder="SEARCH VALUES..." value={search}
                   onChange={(e) => { setSearch(e.target.value); setPage(0); }}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm bg-transparent outline-none"
-                  style={{ border: '1px solid rgba(255,255,255,0.1)', color: '#F1F5F9', fontFamily: 'Inter' }}
+                  className="w-full pl-12 pr-4 py-3 text-[10px] uppercase tracking-widest bg-black/60 outline-none placeholder-gray-600 transition-colors focus:bg-black"
+                  style={{ border: '1px solid rgba(255,255,255,0.2)', color: '#FFFFFF', fontFamily: 'JetBrains Mono' }}
                 />
               </div>
               <div className="flex items-center gap-2">
-                <Filter className="w-4 h-4" style={{ color: '#64748B' }} />
+                <Filter className="w-4 h-4 mr-2" style={{ color: '#888888' }} />
                 {(['all', '1', '0'] as const).map((f) => (
                   <button key={f} onClick={() => { setFilterSuccess(f); setPage(0); }}
-                    className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+                    className="px-4 py-2 text-[10px] uppercase tracking-widest transition-colors font-bold"
                     style={{
-                      background: filterSuccess === f ? 'rgba(0,229,255,0.15)' : 'rgba(255,255,255,0.05)',
-                      color: filterSuccess === f ? '#00E5FF' : '#94A3B8',
-                      border: `1px solid ${filterSuccess === f ? 'rgba(0,229,255,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                      background: filterSuccess === f ? '#FFFFFF' : 'rgba(0,0,0,0.6)',
+                      color: filterSuccess === f ? '#000000' : '#888888',
+                      border: `1px solid rgba(255,255,255,0.2)`,
+                      fontFamily: 'JetBrains Mono'
                     }}>
                     {f === 'all' ? 'All' : f === '1' ? 'Success' : 'Failure'}
                   </button>
                 ))}
               </div>
-              <span className="text-xs" style={{ color: '#64748B', fontFamily: 'JetBrains Mono' }}>
-                {filtered.length} records
+              <span className="text-[10px] uppercase tracking-widest border border-white/20 bg-black/60 px-4 py-2" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>
+                {filtered.length} RECORDS
               </span>
             </div>
           </RevealSection>
 
           {/* Table */}
           <RevealSection>
-            <div className="glass rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.05)' }}>
+            <div className="border border-white/20 bg-black/60 overflow-hidden relative">
+              <div className="absolute inset-0 grid-pattern opacity-10 pointer-events-none" />
               {loading ? (
-                <div className="p-12 text-center">
-                  <div className="w-8 h-8 rounded-full border-2 border-transparent animate-spin mx-auto" style={{ borderTopColor: '#00E5FF' }} />
-                  <p className="text-xs mt-3" style={{ color: '#64748B' }}>Loading dataset...</p>
+                <div className="p-12 text-center relative z-10">
+                  <div className="w-8 h-8 border border-white/20 animate-spin mx-auto bg-white/5" />
+                  <p className="text-[10px] uppercase tracking-widest mt-4" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>Loading dataset...</p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-xs">
+                <div className="overflow-x-auto relative z-10">
+                  <table className="w-full text-[10px]">
                     <thead>
-                      <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <th className="px-3 py-3 text-left" style={{ color: '#64748B' }}>#</th>
+                      <tr className="bg-white/5" style={{ borderBottom: '1px solid rgba(255,255,255,0.2)' }}>
+                        <th className="px-4 py-4 text-left" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>#</th>
                         {columns.map((col) => (
-                          <th key={col} className="px-3 py-3 text-left cursor-pointer hover:text-[#00E5FF] transition-colors"
-                            style={{ color: sortKey === col ? '#00E5FF' : '#94A3B8', fontFamily: 'Inter' }}
+                          <th key={col} className="px-4 py-4 text-left cursor-pointer hover:text-white transition-colors uppercase tracking-widest"
+                            style={{ color: sortKey === col ? '#FFFFFF' : '#888888', fontFamily: 'JetBrains Mono' }}
                             onClick={() => handleSort(col)}>
-                            <span className="flex items-center gap-1">
+                            <span className="flex items-center gap-2">
                               {col.replace(/_/g, ' ')}
                               {sortKey === col && <ArrowUpDown className="w-3 h-3" />}
                             </span>
@@ -180,14 +186,15 @@ export default function DataExplorerPage() {
                     </thead>
                     <tbody>
                       {paged.map((row, i) => (
-                        <tr key={i} className="hover:bg-[rgba(255,255,255,0.03)] transition-colors" style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                          <td className="px-3 py-2.5" style={{ color: '#64748B', fontFamily: 'JetBrains Mono' }}>{page * pageSize + i + 1}</td>
+                        <tr key={i} className="hover:bg-white/5 transition-colors" style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                          <td className="px-4 py-3" style={{ color: '#555555', fontFamily: 'JetBrains Mono' }}>{page * pageSize + i + 1}</td>
                           {columns.map((col) => (
-                            <td key={col} className="px-3 py-2.5" style={{
+                            <td key={col} className="px-4 py-3" style={{
                               fontFamily: 'JetBrains Mono',
-                              color: col === 'task_success' ? (row[col] === 1 ? '#10B981' : '#EF4444') : '#F1F5F9',
+                              color: col === 'task_success' ? (row[col] === 1 ? '#FFFFFF' : '#555555') : '#AAAAAA',
+                              fontWeight: col === 'task_success' ? 'bold' : 'normal'
                             }}>
-                              {col === 'task_success' ? (row[col] === 1 ? '✓' : '✗') : row[col]}
+                              {col === 'task_success' ? (row[col] === 1 ? 'SUCCESS' : 'FAILURE') : row[col]}
                             </td>
                           ))}
                         </tr>
@@ -199,18 +206,18 @@ export default function DataExplorerPage() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between px-4 py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                <div className="flex items-center justify-between px-6 py-4 relative z-10" style={{ borderTop: '1px solid rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.6)' }}>
                   <button onClick={() => setPage(Math.max(0, page - 1))} disabled={page === 0}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs transition-all disabled:opacity-30"
-                    style={{ color: '#94A3B8', background: 'rgba(255,255,255,0.05)' }}>
+                    className="flex items-center gap-2 px-4 py-2 border border-white/20 text-[10px] uppercase tracking-widest transition-colors hover:bg-white/10 disabled:opacity-30"
+                    style={{ color: '#FFFFFF', fontFamily: 'JetBrains Mono' }}>
                     <ChevronLeft className="w-3.5 h-3.5" /> Prev
                   </button>
-                  <span className="text-xs" style={{ color: '#64748B', fontFamily: 'JetBrains Mono' }}>
+                  <span className="text-[10px] uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>
                     Page {page + 1} of {totalPages}
                   </span>
                   <button onClick={() => setPage(Math.min(totalPages - 1, page + 1))} disabled={page >= totalPages - 1}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs transition-all disabled:opacity-30"
-                    style={{ color: '#94A3B8', background: 'rgba(255,255,255,0.05)' }}>
+                    className="flex items-center gap-2 px-4 py-2 border border-white/20 text-[10px] uppercase tracking-widest transition-colors hover:bg-white/10 disabled:opacity-30"
+                    style={{ color: '#FFFFFF', fontFamily: 'JetBrains Mono' }}>
                     Next <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>

@@ -1,0 +1,34 @@
+[
+  {
+    "feature": "hours_coding",
+    "importance": 2.6366
+  },
+  {
+    "feature": "commits",
+    "importance": 1.7968
+  },
+  {
+    "feature": "distractions",
+    "importance": 1.7066
+  },
+  {
+    "feature": "cognitive_load",
+    "importance": 1.4432
+  },
+  {
+    "feature": "sleep_hours",
+    "importance": 1.192
+  },
+  {
+    "feature": "bugs_reported",
+    "importance": 1.1043
+  },
+  {
+    "feature": "ai_usage_hours",
+    "importance": 0.416
+  },
+  {
+    "feature": "coffee_intake_mg",
+    "importance": 0.2578
+  }
+]

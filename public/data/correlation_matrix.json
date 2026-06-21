@@ -1,0 +1,101 @@
+{
+  "hours_coding": {
+    "hours_coding": 1.0,
+    "coffee_intake_mg": -0.037,
+    "distractions": 0.0452,
+    "sleep_hours": 0.1076,
+    "commits": -0.0193,
+    "bugs_reported": -0.0531,
+    "ai_usage_hours": 0.0051,
+    "cognitive_load": 0.0808,
+    "task_success": 0.4424
+  },
+  "coffee_intake_mg": {
+    "hours_coding": -0.037,
+    "coffee_intake_mg": 1.0,
+    "distractions": 0.0603,
+    "sleep_hours": -0.0544,
+    "commits": -0.033,
+    "bugs_reported": -0.0985,
+    "ai_usage_hours": -0.0992,
+    "cognitive_load": -0.0078,
+    "task_success": -0.0019
+  },
+  "distractions": {
+    "hours_coding": 0.0452,
+    "coffee_intake_mg": 0.0603,
+    "distractions": 1.0,
+    "sleep_hours": 0.0826,
+    "commits": -0.0199,
+    "bugs_reported": -0.061,
+    "ai_usage_hours": 0.0359,
+    "cognitive_load": -0.0152,
+    "task_success": -0.2132
+  },
+  "sleep_hours": {
+    "hours_coding": 0.1076,
+    "coffee_intake_mg": -0.0544,
+    "distractions": 0.0826,
+    "sleep_hours": 1.0,
+    "commits": -0.0205,
+    "bugs_reported": -0.0127,
+    "ai_usage_hours": -0.0099,
+    "cognitive_load": -0.0032,
+    "task_success": 0.2399
+  },
+  "commits": {
+    "hours_coding": -0.0193,
+    "coffee_intake_mg": -0.033,
+    "distractions": -0.0199,
+    "sleep_hours": -0.0205,
+    "commits": 1.0,
+    "bugs_reported": -0.0783,
+    "ai_usage_hours": -0.0252,
+    "cognitive_load": 0.0046,
+    "task_success": 0.2953
+  },
+  "bugs_reported": {
+    "hours_coding": -0.0531,
+    "coffee_intake_mg": -0.0985,
+    "distractions": -0.061,
+    "sleep_hours": -0.0127,
+    "commits": -0.0783,
+    "bugs_reported": 1.0,
+    "ai_usage_hours": -0.0084,
+    "cognitive_load": 0.0,
+    "task_success": -0.2322
+  },
+  "ai_usage_hours": {
+    "hours_coding": 0.0051,
+    "coffee_intake_mg": -0.0992,
+    "distractions": 0.0359,
+    "sleep_hours": -0.0099,
+    "commits": -0.0252,
+    "bugs_reported": -0.0084,
+    "ai_usage_hours": 1.0,
+    "cognitive_load": 0.0244,
+    "task_success": 0.0741
+  },
+  "cognitive_load": {
+    "hours_coding": 0.0808,
+    "coffee_intake_mg": -0.0078,
+    "distractions": -0.0152,
+    "sleep_hours": -0.0032,
+    "commits": 0.0046,
+    "bugs_reported": 0.0,
+    "ai_usage_hours": 0.0244,
+    "cognitive_load": 1.0,
+    "task_success": -0.1907
+  },
+  "task_success": {
+    "hours_coding": 0.4424,
+    "coffee_intake_mg": -0.0019,
+    "distractions": -0.2132,
+    "sleep_hours": 0.2399,
+    "commits": 0.2953,
+    "bugs_reported": -0.2322,
+    "ai_usage_hours": 0.0741,
+    "cognitive_load": -0.1907,
+    "task_success": 1.0
+  }
+}

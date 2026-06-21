@@ -1,0 +1,50 @@
+{
+  "hours_coding": {
+    "mean": 4.9102,
+    "std": 2.2109,
+    "min": 0.0,
+    "max": 11.12
+  },
+  "coffee_intake_mg": {
+    "mean": 439.2315,
+    "std": 136.6751,
+    "min": 0.0,
+    "max": 600.0
+  },
+  "distractions": {
+    "mean": 3.2096,
+    "std": 1.7187,
+    "min": 0.0,
+    "max": 8.0
+  },
+  "sleep_hours": {
+    "mean": 7.1206,
+    "std": 1.4998,
+    "min": 3.0,
+    "max": 10.0
+  },
+  "commits": {
+    "mean": 4.6747,
+    "std": 2.9141,
+    "min": 0.0,
+    "max": 13.0
+  },
+  "bugs_reported": {
+    "mean": 1.1796,
+    "std": 1.0843,
+    "min": 0.0,
+    "max": 5.0
+  },
+  "ai_usage_hours": {
+    "mean": 1.3961,
+    "std": 1.0408,
+    "min": 0.0,
+    "max": 5.32
+  },
+  "cognitive_load": {
+    "mean": 4.6046,
+    "std": 1.9622,
+    "min": 1.0,
+    "max": 10.0
+  }
+}

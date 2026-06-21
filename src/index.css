@@ -158,7 +158,6 @@ code, pre, .font-mono {
   -webkit-backdrop-filter: blur(4px);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
   position: relative;
-  border-radius: inherit;
 }
 
 .liquid-glass::before {
@@ -180,7 +179,6 @@ code, pre, .font-mono {
   -webkit-backdrop-filter: blur(50px);
   box-shadow: 4px 4px 4px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.15);
   position: relative;
-  border-radius: inherit;
 }
 
 .liquid-glass-strong::before {

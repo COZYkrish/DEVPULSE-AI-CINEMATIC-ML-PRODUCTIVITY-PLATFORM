@@ -45,7 +45,8 @@ export default function Navbar() {
           </Link>
 
           {/* Center: Liquid Glass Pill */}
-          <div className="hidden lg:flex items-center p-1.5 rounded-full liquid-glass pointer-events-auto">
+          <div className="absolute left-1/2 -translate-x-1/2 hidden lg:block pointer-events-auto">
+            <div className="flex items-center p-1.5 rounded-full liquid-glass">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.path;
               return (
@@ -69,17 +70,7 @@ export default function Navbar() {
                 </Link>
               );
             })}
-            
-            {/* CTA Button in Pill */}
-            <Link
-              to="/dashboard"
-              className="ml-2 flex items-center gap-1.5 px-5 py-2.5 bg-white text-black rounded-full font-medium text-sm transition-transform hover:scale-105"
-              style={{ fontFamily: 'Barlow, sans-serif' }}
-            >
-              Launch System
-              {/* @ts-ignore */}
-              <iconify-icon icon="lucide:arrow-up-right" width="18" height="18"></iconify-icon>
-            </Link>
+            </div>
           </div>
 
           {/* Mobile: Glass Circle Toggle */}

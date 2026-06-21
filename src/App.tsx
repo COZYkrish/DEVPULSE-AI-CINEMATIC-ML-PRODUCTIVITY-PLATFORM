@@ -16,12 +16,10 @@ const AboutPage = lazy(() => import('@/routes/About/AboutPage'));
 
 function PageLoader() {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: '#050816' }}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 rounded-full border-2 border-transparent animate-spin"
-          style={{ borderTopColor: '#00E5FF', borderRightColor: '#7C3AED' }}
-        />
-        <p className="text-sm" style={{ color: '#94A3B8', fontFamily: 'Inter, sans-serif' }}>Loading module...</p>
+        <div className="w-12 h-12 border border-white/20 animate-spin bg-white/5" />
+        <p className="text-[10px] uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono, monospace' }}>LOADING MODULE...</p>
       </div>
     </div>
   );
@@ -30,7 +28,7 @@ function PageLoader() {
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen" style={{ background: '#050816' }}>
+      <div className="min-h-screen bg-black">
         <Navbar />
         <AnimatePresence mode="wait">
           <Suspense fallback={<PageLoader />}>

@@ -26,8 +26,7 @@ export default function Preloader() {
         <motion.div
           exit={{ opacity: 0, scale: 1.1 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
-          style={{ background: '#050816' }}
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black"
         >
           {/* Logo */}
           <motion.div
@@ -36,9 +35,7 @@ export default function Preloader() {
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
             className="relative mb-8"
           >
-            <div className="w-20 h-20 rounded-2xl flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, #00E5FF, #7C3AED)' }}
-            >
+            <div className="w-20 h-20 border border-white flex items-center justify-center bg-white/5">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
               </svg>
@@ -46,13 +43,13 @@ export default function Preloader() {
             <motion.div
               animate={{
                 boxShadow: [
-                  '0 0 20px rgba(0, 229, 255, 0.3)',
-                  '0 0 60px rgba(0, 229, 255, 0.5)',
-                  '0 0 20px rgba(0, 229, 255, 0.3)',
+                  '0 0 10px rgba(255, 255, 255, 0.1)',
+                  '0 0 30px rgba(255, 255, 255, 0.2)',
+                  '0 0 10px rgba(255, 255, 255, 0.1)',
                 ],
               }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="absolute inset-0 rounded-2xl"
+              className="absolute inset-0"
             />
           </motion.div>
 
@@ -61,18 +58,18 @@ export default function Preloader() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-2xl font-bold mb-2"
-            style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}
+            className="text-2xl font-light uppercase tracking-widest mb-2"
+            style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#FFFFFF' }}
           >
-            DEVPULSE AI
+            DEVPULSE <span className="font-bold">AI</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="text-sm mb-8"
-            style={{ color: '#64748B', fontFamily: 'JetBrains Mono, monospace' }}
+            className="text-[10px] uppercase tracking-widest mb-8"
+            style={{ color: '#888888', fontFamily: 'JetBrains Mono, monospace' }}
           >
             Initializing prediction engine...
           </motion.p>
@@ -82,13 +79,13 @@ export default function Preloader() {
             initial={{ opacity: 0, scaleX: 0 }}
             animate={{ opacity: 1, scaleX: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="w-48 h-1 rounded-full overflow-hidden"
+            className="w-48 h-px overflow-hidden"
             style={{ background: 'rgba(255,255,255,0.1)' }}
           >
             <motion.div
-              className="h-full rounded-full"
+              className="h-full"
               style={{
-                background: 'linear-gradient(90deg, #00E5FF, #7C3AED)',
+                background: '#FFFFFF',
                 width: `${Math.min(progress, 100)}%`,
                 transition: 'width 0.3s ease-out',
               }}
@@ -99,8 +96,8 @@ export default function Preloader() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="mt-3 text-xs"
-            style={{ color: '#64748B', fontFamily: 'JetBrains Mono, monospace' }}
+            className="mt-3 text-[10px] uppercase tracking-widest"
+            style={{ color: '#888888', fontFamily: 'JetBrains Mono, monospace' }}
           >
             {Math.min(Math.round(progress), 100)}%
           </motion.span>

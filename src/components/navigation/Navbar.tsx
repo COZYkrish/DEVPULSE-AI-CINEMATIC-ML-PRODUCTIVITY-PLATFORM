@@ -45,33 +45,25 @@ export default function Navbar() {
             : 'py-4'
         )}
       >
-        <div className={cn(
-          'container transition-all duration-500',
-          isScrolled || !isLanding ? '' : ''
-        )}>
+        <div className="container transition-all duration-500">
           <div
             className={cn(
-              'flex items-center justify-between rounded-2xl px-4 sm:px-6 py-3 transition-all duration-500',
+              'flex items-center justify-between px-4 sm:px-6 py-3 transition-all duration-500',
               isScrolled || !isLanding
-                ? 'glass shadow-lg shadow-black/20'
+                ? 'border border-white/20 bg-black/80 backdrop-blur-md shadow-lg shadow-black/20'
                 : 'bg-transparent'
             )}
           >
             {/* Logo */}
-            <Link to="/" className="flex items-center gap-2.5 group">
-              <div className="relative w-9 h-9 rounded-xl flex items-center justify-center overflow-hidden"
-                style={{ background: 'linear-gradient(135deg, #00E5FF, #7C3AED)' }}
-              >
-                <Zap className="w-5 h-5 text-white relative z-10" strokeWidth={2.5} />
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                  style={{ background: 'linear-gradient(135deg, #7C3AED, #00E5FF)' }}
-                />
+            <Link to="/" className="flex items-center gap-4 group">
+              <div className="relative w-10 h-10 border border-white flex items-center justify-center bg-white/5 transition-colors group-hover:bg-white">
+                <Zap className="w-5 h-5 text-white group-hover:text-black transition-colors" strokeWidth={2} />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold tracking-tight" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F1F5F9' }}>
+                <span className="text-sm font-light tracking-widest uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#FFFFFF' }}>
                   DEVPULSE
                 </span>
-                <span className="text-[10px] font-medium -mt-0.5" style={{ color: '#00E5FF', fontFamily: 'JetBrains Mono, monospace' }}>
+                <span className="text-[10px] font-bold tracking-widest uppercase -mt-1" style={{ color: '#AAAAAA', fontFamily: 'JetBrains Mono, monospace' }}>
                   AI
                 </span>
               </div>
@@ -87,19 +79,20 @@ export default function Navbar() {
                     key={link.path}
                     to={link.path}
                     className={cn(
-                      'relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300',
+                      'relative flex items-center gap-2 px-3 py-2 text-[10px] uppercase tracking-widest transition-all duration-300 font-bold',
                       isActive
-                        ? 'text-[#00E5FF]'
-                        : 'text-[#94A3B8] hover:text-[#F1F5F9]'
+                        ? 'text-white'
+                        : 'text-gray-500 hover:text-white'
                     )}
+                    style={{ fontFamily: 'JetBrains Mono' }}
                   >
                     <Icon className="w-3.5 h-3.5" />
                     <span>{link.label}</span>
                     {isActive && (
                       <motion.div
                         layoutId="navbar-indicator"
-                        className="absolute inset-0 rounded-lg -z-10"
-                        style={{ background: 'rgba(0, 229, 255, 0.1)', border: '1px solid rgba(0, 229, 255, 0.2)' }}
+                        className="absolute inset-0 -z-10"
+                        style={{ borderBottom: '1px solid #FFFFFF' }}
                         transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -109,24 +102,20 @@ export default function Navbar() {
             </div>
 
             {/* CTA + Mobile Toggle */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Link
                 to="/dashboard"
-                className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-300 hover:shadow-lg"
-                style={{
-                  background: 'linear-gradient(135deg, #00E5FF, #22D3EE)',
-                  color: '#050816',
-                  fontFamily: 'Space Grotesk, sans-serif',
-                }}
+                className="hidden sm:flex items-center gap-2 px-4 py-2 border border-white bg-white text-black text-[10px] uppercase tracking-widest font-bold transition-all duration-300 hover:bg-black hover:text-white"
+                style={{ fontFamily: 'JetBrains Mono' }}
               >
                 <Zap className="w-3.5 h-3.5" />
-                Launch
+                Launch System
               </Link>
 
               <button
                 onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="lg:hidden p-2 rounded-lg transition-colors"
-                style={{ color: '#94A3B8' }}
+                className="lg:hidden p-2 transition-colors border border-white/20 hover:bg-white/10"
+                style={{ color: '#FFFFFF' }}
               >
                 {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
@@ -145,7 +134,7 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
             className="fixed inset-x-0 top-16 z-40 p-4 lg:hidden"
           >
-            <div className="glass rounded-2xl p-4 shadow-xl shadow-black/30">
+            <div className="border border-white/20 bg-black/95 backdrop-blur-md p-4 shadow-xl shadow-black/30">
               <div className="flex flex-col gap-1">
                 {navLinks.map((link) => {
                   const isActive = location.pathname === link.path;
@@ -155,11 +144,12 @@ export default function Navbar() {
                       key={link.path}
                       to={link.path}
                       className={cn(
-                        'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200',
+                        'flex items-center gap-3 px-4 py-3 text-[10px] uppercase tracking-widest font-bold transition-all duration-200 border border-transparent',
                         isActive
-                          ? 'text-[#00E5FF] bg-[rgba(0,229,255,0.1)]'
-                          : 'text-[#94A3B8] hover:text-[#F1F5F9] hover:bg-[rgba(255,255,255,0.05)]'
+                          ? 'text-white border-white/20 bg-white/5'
+                          : 'text-gray-500 hover:text-white hover:border-white/10 hover:bg-white/5'
                       )}
+                      style={{ fontFamily: 'JetBrains Mono' }}
                     >
                       <Icon className="w-4 h-4" />
                       {link.label}

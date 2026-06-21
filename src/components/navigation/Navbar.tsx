@@ -1,32 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Zap, LayoutDashboard, BarChart3, Trophy, Brain, FlaskConical, Database, History, Info, Home } from 'lucide-react';
+import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import 'iconify-icon'; // Make sure the web component is available
 
 const navLinks = [
-  { path: '/', label: 'Home', icon: Home },
-  { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { path: '/analytics', label: 'Analytics', icon: BarChart3 },
-  { path: '/model-arena', label: 'Arena', icon: Trophy },
-  { path: '/ai-insights', label: 'Insights', icon: Brain },
-  { path: '/developer-lab', label: 'Lab', icon: FlaskConical },
-  { path: '/data-explorer', label: 'Explorer', icon: Database },
-  { path: '/history', label: 'History', icon: History },
-  { path: '/about', label: 'About', icon: Info },
+  { path: '/', label: 'Home' },
+  { path: '/dashboard', label: 'Dashboard' },
+  { path: '/analytics', label: 'Analytics' },
+  { path: '/model-arena', label: 'Arena' },
+  { path: '/ai-insights', label: 'Insights' },
+  { path: '/developer-lab', label: 'Lab' },
+  { path: '/data-explorer', label: 'Explorer' },
+  { path: '/history', label: 'History' },
+  { path: '/about', label: 'About' },
 ];
 
 export default function Navbar() {
   const location = useLocation();
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const isLanding = location.pathname === '/';
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     setIsMobileOpen(false);
@@ -38,88 +31,69 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className={cn(
-          'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
-          isScrolled || !isLanding
-            ? 'py-2'
-            : 'py-4'
-        )}
+        className="fixed top-4 left-0 right-0 z-50 pointer-events-none"
       >
-        <div className="container transition-all duration-500">
-          <div
-            className={cn(
-              'flex items-center justify-between px-4 sm:px-6 py-3 transition-all duration-500',
-              isScrolled || !isLanding
-                ? 'rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]'
-                : 'bg-transparent'
-            )}
+        <div className="container flex items-center justify-between">
+          
+          {/* Left: Glass Circle Logo */}
+          <Link
+            to="/"
+            className="w-12 h-12 rounded-full liquid-glass pointer-events-auto flex items-center justify-center text-white transition-transform hover:scale-105"
           >
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-4 group">
-              <div className="relative w-10 h-10 rounded-full border border-white/20 flex items-center justify-center bg-white/5 transition-colors group-hover:bg-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]">
-                <Zap className="w-5 h-5 text-white group-hover:text-white transition-colors" strokeWidth={2} />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-light tracking-widest uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#FFFFFF' }}>
-                  DEVPULSE
-                </span>
-                <span className="text-[10px] font-bold tracking-widest uppercase -mt-1" style={{ color: '#AAAAAA', fontFamily: 'JetBrains Mono, monospace' }}>
-                  AI
-                </span>
-              </div>
+            {/* @ts-ignore */}
+            <iconify-icon icon="solar:box-minimalistic-linear" width="24" height="24"></iconify-icon>
+          </Link>
+
+          {/* Center: Liquid Glass Pill */}
+          <div className="hidden lg:flex items-center p-1.5 rounded-full liquid-glass pointer-events-auto">
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.path;
+              return (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={cn(
+                    'relative px-4 py-2 rounded-full text-sm font-medium transition-colors',
+                    isActive ? 'text-white' : 'text-white/60 hover:text-white'
+                  )}
+                  style={{ fontFamily: 'Barlow, sans-serif' }}
+                >
+                  {link.label}
+                  {isActive && (
+                    <motion.div
+                      layoutId="nav-pill-indicator"
+                      className="absolute inset-0 bg-white/10 rounded-full -z-10"
+                      transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
+            
+            {/* CTA Button in Pill */}
+            <Link
+              to="/dashboard"
+              className="ml-2 flex items-center gap-1.5 px-5 py-2.5 bg-white text-black rounded-full font-medium text-sm transition-transform hover:scale-105"
+              style={{ fontFamily: 'Barlow, sans-serif' }}
+            >
+              Launch System
+              {/* @ts-ignore */}
+              <iconify-icon icon="lucide:arrow-up-right" width="18" height="18"></iconify-icon>
             </Link>
-
-            {/* Desktop Nav */}
-            <div className="hidden lg:flex items-center gap-1">
-              {navLinks.map((link) => {
-                const isActive = location.pathname === link.path;
-                const Icon = link.icon;
-                return (
-                  <Link
-                    key={link.path}
-                    to={link.path}
-                    className={cn(
-                      'relative flex items-center gap-2 px-4 py-2 rounded-full text-[10px] uppercase tracking-widest transition-all duration-300 font-bold',
-                      isActive
-                        ? 'text-white'
-                        : 'text-gray-500 hover:text-white'
-                    )}
-                    style={{ fontFamily: 'JetBrains Mono' }}
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                    <span>{link.label}</span>
-                    {isActive && (
-                      <motion.div
-                        layoutId="navbar-indicator"
-                        className="absolute inset-0 rounded-full -z-10 bg-white/10 border border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]"
-                        transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                      />
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-
-            {/* CTA + Mobile Toggle */}
-            <div className="flex items-center gap-4">
-              <Link
-                to="/dashboard"
-                className="hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white text-[10px] uppercase tracking-widest font-bold transition-all duration-300 hover:bg-white hover:text-black shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]"
-                style={{ fontFamily: 'JetBrains Mono' }}
-              >
-                <Zap className="w-3.5 h-3.5" />
-                Launch System
-              </Link>
-
-              <button
-                onClick={() => setIsMobileOpen(!isMobileOpen)}
-                className="lg:hidden p-2 rounded-full transition-colors border border-white/20 bg-white/5 hover:bg-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.2)]"
-                style={{ color: '#FFFFFF' }}
-              >
-                {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </button>
-            </div>
           </div>
+
+          {/* Mobile: Glass Circle Toggle */}
+          <button
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            className="lg:hidden w-12 h-12 rounded-full liquid-glass pointer-events-auto flex items-center justify-center text-white transition-transform hover:scale-105"
+          >
+            {isMobileOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              /* @ts-ignore */
+              <iconify-icon icon="solar:hamburger-menu-linear" width="24" height="24"></iconify-icon>
+            )}
+          </button>
         </div>
       </motion.nav>
 
@@ -131,26 +105,24 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-x-0 top-16 z-40 p-4 lg:hidden"
+            className="fixed inset-x-0 top-20 z-40 p-4 lg:hidden"
           >
-            <div className="border border-white/20 bg-black/95 backdrop-blur-md p-4 shadow-xl shadow-black/30">
+            <div className="liquid-glass-strong rounded-3xl p-4 pointer-events-auto">
               <div className="flex flex-col gap-1">
                 {navLinks.map((link) => {
                   const isActive = location.pathname === link.path;
-                  const Icon = link.icon;
                   return (
                     <Link
                       key={link.path}
                       to={link.path}
                       className={cn(
-                        'flex items-center gap-3 px-4 py-3 text-[10px] uppercase tracking-widest font-bold transition-all duration-200 border border-transparent',
+                        'flex items-center px-4 py-3 text-lg font-medium transition-colors rounded-xl',
                         isActive
-                          ? 'text-white border-white/20 bg-white/5'
-                          : 'text-gray-500 hover:text-white hover:border-white/10 hover:bg-white/5'
+                          ? 'text-white bg-white/10'
+                          : 'text-white/60 hover:text-white hover:bg-white/5'
                       )}
-                      style={{ fontFamily: 'JetBrains Mono' }}
+                      style={{ fontFamily: 'Barlow, sans-serif' }}
                     >
-                      <Icon className="w-4 h-4" />
                       {link.label}
                     </Link>
                   );

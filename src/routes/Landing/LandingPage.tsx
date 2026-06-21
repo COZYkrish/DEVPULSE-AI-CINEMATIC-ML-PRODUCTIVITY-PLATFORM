@@ -1,8 +1,11 @@
 import { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
-import { Zap, BarChart3, Brain, ArrowRight, ChevronDown, Code2, Coffee, Moon, GitCommit, Bug, Activity, Sparkles, TrendingUp } from 'lucide-react';
+import { Code2, Moon, GitCommit, Activity } from 'lucide-react';
 import SceneContainer from '@/components/3d/SceneContainer';
+import HlsVideo from '@/components/ui/HlsVideo';
+import BlurText from '@/components/animations/BlurText';
+import 'iconify-icon';
 
 /* ============================================ */
 /* Animated Counter                              */
@@ -32,7 +35,7 @@ function AnimatedCounter({ value, suffix = '', prefix = '', duration = 2 }: {
     requestAnimationFrame(animate);
   }, [isInView, value, suffix, prefix, duration]);
 
-  return <span ref={ref} style={{ fontFamily: 'JetBrains Mono, monospace' }}>0</span>;
+  return <span ref={ref} style={{ fontFamily: 'Instrument Serif, serif' }}>0</span>;
 }
 
 /* ============================================ */
@@ -42,7 +45,7 @@ function SectionReveal({ children, className = '', delay = 0 }: {
   children: React.ReactNode; className?: string; delay?: number;
 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: false, margin: '-20%' });
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
     <motion.div
@@ -65,15 +68,15 @@ function FeatureRow({ icon: Icon, title, description, delay }: {
 }) {
   return (
     <SectionReveal delay={delay}>
-      <div className="flex items-start gap-6 p-6 border-b border-white/10 hover:bg-white/5 transition-colors duration-300">
-        <div className="w-12 h-12 flex items-center justify-center border border-white/20 shrink-0">
+      <div className="liquid-glass flex items-start gap-6 p-6 mb-4 hover:-translate-y-1 transition-transform duration-300">
+        <div className="w-12 h-12 flex items-center justify-center shrink-0 border border-white/20 rounded-full bg-white/5">
           <Icon className="w-5 h-5 text-white" />
         </div>
         <div>
-          <h3 className="text-xl font-medium mb-2 tracking-wide uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
+          <h3 className="text-2xl mb-1 tracking-tight" style={{ fontFamily: 'Instrument Serif, serif' }}>
             {title}
           </h3>
-          <p className="text-sm leading-relaxed text-gray-400">
+          <p className="text-sm leading-relaxed text-white/60 font-light" style={{ fontFamily: 'Barlow, sans-serif' }}>
             {description}
           </p>
         </div>
@@ -90,7 +93,7 @@ export default function LandingPage() {
     <div className="relative w-full bg-black text-white">
       {/* 3D Fixed Background */}
       <SceneContainer isFixedScroll={true} />
-      
+
       {/* Cinematic Overlays */}
       <div className="vignette-overlay" />
       <div className="noise-overlay" />
@@ -100,73 +103,81 @@ export default function LandingPage() {
       {/* SCENE 1 — THE VOID (HERO)                    */}
       {/* ============================================ */}
       <section className="relative h-[100vh] flex flex-col items-center justify-center overflow-hidden">
-        <div className="container relative z-10 text-center">
+        {/* Background Video */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <HlsVideo src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-b from-transparent to-black" />
+        </div>
+
+        <div className="container relative z-10 text-center flex flex-col items-center">
           <SectionReveal delay={0.2}>
-            <div className="inline-block border border-white/20 px-4 py-2 mb-8 tracking-widest text-xs uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-              System Initialization
+            <div className="liquid-glass rounded-full px-4 py-1.5 mb-8 flex items-center gap-2">
+              <span className="bg-white text-black text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">New</span>
+              <span className="text-sm font-light text-white/80" style={{ fontFamily: 'Barlow, sans-serif' }}>System Initialization</span>
             </div>
           </SectionReveal>
 
-          <SectionReveal delay={0.4}>
-            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-light mb-6 tracking-tighter uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-              Predict Developer <br />
-              <span className="font-bold">Productivity</span>
-            </h1>
-          </SectionReveal>
+          <BlurText 
+            text="Predict Developer Productivity"
+            className="text-6xl sm:text-[6.5rem] leading-[1.1] mb-6 tracking-tight italic"
+            delay={0.4}
+            style={{ fontFamily: 'Instrument Serif, serif' }}
+          />
 
-          <SectionReveal delay={0.6}>
-            <p className="text-lg sm:text-xl max-w-2xl mx-auto mb-12 text-gray-400 font-light">
+          <SectionReveal delay={0.8}>
+            <p className="text-lg sm:text-xl max-w-2xl mx-auto mb-12 text-white/60 font-light" style={{ fontFamily: 'Barlow, sans-serif' }}>
               Understand success patterns. Optimize performance. Make data-driven decisions 
               with raw machine learning running directly in your browser.
             </p>
           </SectionReveal>
 
-          <SectionReveal delay={0.8}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <Link to="/dashboard" className="magnetic-btn magnetic-btn-primary w-64 h-16">
+          <SectionReveal delay={1.0}>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link to="/dashboard" className="flex items-center gap-2 px-8 py-4 bg-white text-black rounded-full font-medium text-lg hover:scale-105 transition-transform" style={{ fontFamily: 'Barlow, sans-serif' }}>
                 Launch System
+                {/* @ts-ignore */}
+                <iconify-icon icon="lucide:arrow-up-right" width="20" height="20"></iconify-icon>
               </Link>
-              <Link to="/analytics" className="magnetic-btn magnetic-btn-secondary w-64 h-16">
+              <Link to="/analytics" className="liquid-glass-strong rounded-full flex items-center gap-2 px-8 py-4 text-white font-medium text-lg hover:scale-105 transition-transform" style={{ fontFamily: 'Barlow, sans-serif' }}>
                 Explore Data
               </Link>
             </div>
           </SectionReveal>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4"
-        >
-          <span className="text-[10px] tracking-widest uppercase text-gray-500" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-            Scroll to Dive Deeper
-          </span>
-          <div className="w-[1px] h-12 bg-gradient-to-b from-white/50 to-transparent" />
-        </motion.div>
       </section>
 
       {/* ============================================ */}
       {/* SCENE 2 — THE ARCHITECT (Features)           */}
       {/* ============================================ */}
       <section className="relative min-h-[100vh] flex items-center py-32">
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <HlsVideo src="https://stream.mux.com/9JXDljEVWYwWu01PUkAemafDugK89o01BR6zqJ3aS9u00A.m3u8" className="w-full h-full object-cover" />
+          <div className="absolute top-0 left-0 right-0 h-[200px] bg-gradient-to-b from-black to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-black to-transparent" />
+        </div>
+
         <div className="container relative z-10">
           <div className="grid lg:grid-cols-2 gap-16">
             <div>
               <SectionReveal>
-                <div className="text-xs tracking-widest text-gray-500 mb-4 uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-                  // Scene 02: The Architect
+                <div className="liquid-glass inline-flex rounded-full px-4 py-1.5 mb-6">
+                  <span className="text-sm font-light text-white/80 uppercase tracking-widest" style={{ fontFamily: 'Barlow, sans-serif' }}>Scene 02: The Architect</span>
                 </div>
-                <h2 className="text-4xl sm:text-6xl font-light mb-8 tracking-tight uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                  Deconstruct <br/><span className="font-bold">Performance</span>
-                </h2>
-                <p className="text-lg text-gray-400 mb-12">
+              </SectionReveal>
+              <BlurText 
+                text="Deconstruct Performance"
+                className="text-5xl sm:text-7xl mb-8 tracking-tight italic"
+                style={{ fontFamily: 'Instrument Serif, serif' }}
+              />
+              <SectionReveal delay={0.3}>
+                <p className="text-lg text-white/60 mb-12 font-light leading-relaxed" style={{ fontFamily: 'Barlow, sans-serif' }}>
                   We analyze 8 critical dimensions of developer productivity to predict task success with machine learning precision. 
                   Every input is a vector in high-dimensional space.
                 </p>
               </SectionReveal>
             </div>
-            <div className="space-y-0 border-t border-white/10">
+            <div className="space-y-4">
               <FeatureRow icon={Code2} title="Coding Hours" description="Track deep work sessions and their impact on deliverables and code quality." delay={0.1} />
               <FeatureRow icon={Moon} title="Sleep Quality" description="Understand how rest patterns correlate with cognitive performance." delay={0.2} />
               <FeatureRow icon={Activity} title="Cognitive Load" description="Measure mental fatigue and its effect on decision quality and error rates." delay={0.3} />
@@ -180,32 +191,44 @@ export default function LandingPage() {
       {/* SCENE 3 — THE NEXUS (Data Galaxy)            */}
       {/* ============================================ */}
       <section className="relative min-h-[100vh] flex items-center justify-center py-32">
-        <div className="container relative z-10">
-          <SectionReveal className="max-w-3xl">
-            <div className="text-xs tracking-widest text-gray-500 mb-4 uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-              // Scene 03: The Nexus
-            </div>
-            <h2 className="text-4xl sm:text-6xl font-light mb-8 tracking-tight uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-              Patterns in the <br/><span className="font-bold">Noise</span>
-            </h2>
-          </SectionReveal>
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <HlsVideo src="https://stream.mux.com/NcU3HlHeF7CUL86azTTzpy3Tlb00d6iF3BmCdFslMJYM.m3u8" className="w-full h-full object-cover saturate-0" />
+          <div className="absolute top-0 left-0 right-0 h-[200px] bg-gradient-to-b from-black to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-black to-transparent" />
+        </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border border-white/20 mt-16">
-            {[
-              { label: 'Dataset Records', value: 501 },
-              { label: 'Feature Dimensions', value: 8 },
-              { label: 'Success Rate', value: 57, suffix: '%' },
-              { label: 'ML Models', value: 4 },
-            ].map((stat, i) => (
-              <SectionReveal key={stat.label} delay={i * 0.1} className="bg-black p-8 sm:p-12">
-                <div className="text-5xl font-light mb-4 text-white">
-                  <AnimatedCounter value={stat.value} suffix={stat.suffix || ''} />
-                </div>
-                <div className="text-xs tracking-widest text-gray-500 uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-                  {stat.label}
-                </div>
-              </SectionReveal>
-            ))}
+        <div className="container relative z-10">
+          <div className="text-center">
+            <SectionReveal>
+              <div className="liquid-glass inline-flex rounded-full px-4 py-1.5 mb-6">
+                <span className="text-sm font-light text-white/80 uppercase tracking-widest" style={{ fontFamily: 'Barlow, sans-serif' }}>Scene 03: The Nexus</span>
+              </div>
+            </SectionReveal>
+            <BlurText 
+              text="Patterns in the Noise"
+              className="text-5xl sm:text-7xl mb-16 tracking-tight italic justify-center"
+              style={{ fontFamily: 'Instrument Serif, serif' }}
+            />
+          </div>
+
+          <div className="liquid-glass-strong rounded-3xl p-8 sm:p-12">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 divide-x divide-white/10">
+              {[
+                { label: 'Dataset Records', value: 501 },
+                { label: 'Feature Dimensions', value: 8 },
+                { label: 'Success Rate', value: 57, suffix: '%' },
+                { label: 'ML Models', value: 4 },
+              ].map((stat, i) => (
+                <SectionReveal key={stat.label} delay={i * 0.1} className="text-center px-4">
+                  <div className="text-6xl sm:text-7xl mb-4 text-white italic">
+                    <AnimatedCounter value={stat.value} suffix={stat.suffix || ''} />
+                  </div>
+                  <div className="text-sm text-white/60 font-medium tracking-wide uppercase" style={{ fontFamily: 'Barlow, sans-serif' }}>
+                    {stat.label}
+                  </div>
+                </SectionReveal>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -217,13 +240,17 @@ export default function LandingPage() {
         <div className="container relative z-10">
           <div className="max-w-xl ml-auto">
             <SectionReveal>
-              <div className="text-xs tracking-widest text-gray-500 mb-4 uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-                // Scene 04: The Oracle
+              <div className="liquid-glass inline-flex rounded-full px-4 py-1.5 mb-6">
+                <span className="text-sm font-light text-white/80 uppercase tracking-widest" style={{ fontFamily: 'Barlow, sans-serif' }}>Scene 04: The Oracle</span>
               </div>
-              <h2 className="text-4xl sm:text-6xl font-light mb-8 tracking-tight uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-                Inference <br/><span className="font-bold">Engine</span>
-              </h2>
-              <p className="text-lg text-gray-400 mb-12">
+            </SectionReveal>
+            <BlurText 
+              text="Inference Engine"
+              className="text-5xl sm:text-7xl mb-8 tracking-tight italic"
+              style={{ fontFamily: 'Instrument Serif, serif' }}
+            />
+            <SectionReveal delay={0.3}>
+              <p className="text-lg text-white/60 mb-12 font-light leading-relaxed" style={{ fontFamily: 'Barlow, sans-serif' }}>
                 Four models compete in our AI arena. The best is exported to ONNX format and runs real-time inference directly in your browser — zero latency, pure computation.
               </p>
             </SectionReveal>
@@ -236,13 +263,13 @@ export default function LandingPage() {
                 { name: 'Logistic Regression', desc: 'Linear Baseline', active: false },
               ].map((model, i) => (
                 <SectionReveal key={model.name} delay={i * 0.1}>
-                  <div className={`p-4 border ${model.active ? 'border-white bg-white/5' : 'border-white/10'} flex items-center justify-between`}>
+                  <div className={`liquid-glass rounded-2xl p-6 flex items-center justify-between ${model.active ? 'bg-white/10' : ''}`}>
                     <div>
-                      <div className="text-sm font-bold uppercase tracking-wide">{model.name}</div>
-                      <div className="text-xs text-gray-500 mt-1" style={{ fontFamily: 'JetBrains Mono, monospace' }}>{model.desc}</div>
+                      <div className="text-2xl italic tracking-tight" style={{ fontFamily: 'Instrument Serif, serif' }}>{model.name}</div>
+                      <div className="text-sm text-white/60 mt-1 font-light" style={{ fontFamily: 'Barlow, sans-serif' }}>{model.desc}</div>
                     </div>
                     {model.active && (
-                      <div className="w-2 h-2 bg-white animate-pulse" />
+                      <div className="w-3 h-3 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]" />
                     )}
                   </div>
                 </SectionReveal>
@@ -256,33 +283,37 @@ export default function LandingPage() {
       {/* SCENE 5 — THE HORIZON (CTA)                  */}
       {/* ============================================ */}
       <section className="relative min-h-[100vh] flex flex-col items-center justify-center py-32">
-        <div className="container relative z-10 text-center">
-          <SectionReveal>
-            <div className="text-xs tracking-widest text-gray-500 mb-4 uppercase" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-              // Scene 05: The Horizon
-            </div>
-            <h2 className="text-5xl sm:text-7xl font-light mb-8 tracking-tight uppercase" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-              The future is <span className="font-bold">Predicted</span>
-            </h2>
-            <p className="text-lg max-w-2xl mx-auto mb-16 text-gray-400">
-              Start making data-driven decisions about developer productivity today. 
-              No signup required. No data leaves your browser.
-            </p>
-          </SectionReveal>
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <HlsVideo src="https://stream.mux.com/8wrHPCX2dC3msyYU9ObwqNdm00u3ViXvOSHUMRYSEe5Q.m3u8" className="w-full h-full object-cover" />
+          <div className="absolute top-0 left-0 right-0 h-[200px] bg-gradient-to-b from-black to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-transparent to-black" />
+        </div>
 
-          <SectionReveal delay={0.2}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <Link to="/dashboard" className="magnetic-btn magnetic-btn-primary w-64 h-16">
+        <div className="container relative z-10 text-center flex flex-col items-center">
+          <BlurText 
+            text="Your next workflow starts here."
+            className="text-6xl sm:text-[6.5rem] leading-[1.1] mb-8 tracking-tight italic justify-center"
+            style={{ fontFamily: 'Instrument Serif, serif' }}
+          />
+
+          <SectionReveal delay={0.4}>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link to="/dashboard" className="flex items-center gap-2 px-8 py-4 bg-white text-black rounded-full font-medium text-lg hover:scale-105 transition-transform" style={{ fontFamily: 'Barlow, sans-serif' }}>
                 Initialize Sequence
+                {/* @ts-ignore */}
+                <iconify-icon icon="lucide:arrow-up-right" width="20" height="20"></iconify-icon>
               </Link>
             </div>
           </SectionReveal>
         </div>
         
         {/* Footer info at absolute bottom */}
-        <div className="absolute bottom-8 left-0 right-0 flex justify-between px-8 text-[10px] text-gray-600 uppercase tracking-widest" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
-          <span>Devpulse AI // System v1.0</span>
-          <span>End of Transmission</span>
+        <div className="absolute bottom-8 left-0 right-0 border-t border-white/10 pt-6 px-8 flex justify-between text-sm text-white/40 font-light" style={{ fontFamily: 'Barlow, sans-serif' }}>
+          <span>© 2026 Devpulse AI</span>
+          <div className="flex gap-6">
+            <Link to="#" className="hover:text-white transition-colors">Privacy</Link>
+            <Link to="#" className="hover:text-white transition-colors">Terms</Link>
+          </div>
         </div>
       </section>
     </div>

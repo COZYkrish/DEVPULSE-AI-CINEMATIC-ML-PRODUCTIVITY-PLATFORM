@@ -25,7 +25,7 @@ export default function HlsVideo({ src, ...props }: HlsVideoProps) {
         hls.attachMedia(video);
         
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          video.play().catch(e => console.error("Video auto-play failed", e));
+          // Playback is now handled entirely by the IntersectionObserver below
         });
 
         hls.on(Hls.Events.ERROR, (_event, data) => {
@@ -37,19 +37,26 @@ export default function HlsVideo({ src, ...props }: HlsVideoProps) {
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         // Fallback for native HLS support (Safari)
         video.src = src;
-        video.addEventListener('loadedmetadata', () => {
-          video.play().catch(e => console.error("Video auto-play failed", e));
-        });
       }
     } else {
       // Normal video
       video.src = src;
-      video.addEventListener('loadedmetadata', () => {
-        video.play().catch(e => console.error("Video auto-play failed", e));
-      });
     }
 
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          video.play().catch(e => console.log("Play interrupted or not ready:", e));
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0, rootMargin: '200px' }); // start playing slightly before it enters
+
+    observer.observe(video);
+
     return () => {
+      observer.disconnect();
       if (hls) {
         hls.destroy();
       }
@@ -66,7 +73,6 @@ export default function HlsVideo({ src, ...props }: HlsVideoProps) {
       playsInline
       muted
       loop
-      autoPlay
       {...props}
     />
   );

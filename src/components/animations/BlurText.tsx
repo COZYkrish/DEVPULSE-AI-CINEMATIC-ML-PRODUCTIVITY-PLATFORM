@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, type Variants } from 'framer-motion';
 
 interface BlurTextProps {
   text: string;
@@ -13,7 +13,7 @@ export default function BlurText({ text, className = '', delay = 0, style }: Blu
   const isInView = useInView(ref, { once: true, margin: '-20%' });
   const words = text.split(' ');
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -24,7 +24,7 @@ export default function BlurText({ text, className = '', delay = 0, style }: Blu
     },
   };
 
-  const wordVariants = {
+  const wordVariants: Variants = {
     hidden: {
       y: 40,
       opacity: 0,

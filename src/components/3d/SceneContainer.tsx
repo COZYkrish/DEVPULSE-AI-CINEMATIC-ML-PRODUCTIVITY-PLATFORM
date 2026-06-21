@@ -176,7 +176,7 @@ export default function SceneContainer({ isFixedScroll = false }: { isFixedScrol
       )}
 
       {isFixedScroll && (
-        <EffectComposer disableNormalPass>
+        <EffectComposer>
           <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} intensity={1.5} />
           <Noise opacity={0.15} />
           <Vignette eskil={false} offset={0.1} darkness={1.1} />

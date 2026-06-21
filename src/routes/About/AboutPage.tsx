@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Info, Database, Brain, Code2, Layers, Cpu, ArrowRight, Zap, GitBranch, BarChart3, FlaskConical } from 'lucide-react';
 import PageTransition from '@/components/animations/PageTransition';
+import Waves from '@/components/animations/Waves';
 
 function RevealSection({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef(null);
@@ -45,10 +46,25 @@ const pipeline = [
 export default function AboutPage() {
   return (
     <PageTransition>
-      <div className="min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
-        <div className="vignette-overlay" />
-        <div className="noise-overlay" />
-        <div className="film-lines" />
+      <div className="relative min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-40 mix-blend-screen">
+          <Waves
+            lineColor="rgba(255, 255, 255, 0.15)"
+            backgroundColor="transparent"
+            waveSpeedX={0.02}
+            waveSpeedY={0.01}
+            waveAmpX={40}
+            waveAmpY={20}
+            friction={0.9}
+            tension={0.01}
+            maxCursorMove={120}
+            xGap={12}
+            yGap={36}
+          />
+        </div>
+        <div className="vignette-overlay relative z-0 pointer-events-none" />
+        <div className="noise-overlay relative z-0 pointer-events-none" />
+        <div className="film-lines relative z-0 pointer-events-none" />
         
         <div className="container relative z-10">
           {/* Header */}
@@ -205,9 +221,9 @@ export default function AboutPage() {
                   { label: 'Zero Latency', sub: 'WebAssembly' },
                 ].map((s, i) => (
                   <div key={s.label} className="flex items-center gap-4">
-                    <div className="border border-white/20 bg-black p-4 text-center hover:bg-white hover:text-black transition-colors group">
-                      <div className="text-[10px] font-bold uppercase tracking-widest mb-1 group-hover:text-black" style={{ color: '#FFFFFF', fontFamily: 'Space Grotesk' }}>{s.label}</div>
-                      <div className="text-[9px] uppercase tracking-widest group-hover:text-gray-800" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>{s.sub}</div>
+                    <div className="border border-white/20 bg-black p-4 text-center hover:bg-white transition-colors group cursor-default">
+                      <div className="text-[10px] font-bold uppercase tracking-widest mb-1 text-white group-hover:text-black transition-colors" style={{ fontFamily: 'Space Grotesk' }}>{s.label}</div>
+                      <div className="text-[9px] uppercase tracking-widest text-[#888888] group-hover:text-gray-600 transition-colors" style={{ fontFamily: 'JetBrains Mono' }}>{s.sub}</div>
                     </div>
                     {i < 3 && <ArrowRight className="w-4 h-4 text-white/50" />}
                   </div>

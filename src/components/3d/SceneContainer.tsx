@@ -157,7 +157,9 @@ export default function SceneContainer({ isFixedScroll = false }: { isFixedScrol
       <directionalLight position={[10, 10, 5]} intensity={2} color="#ffffff" />
       <directionalLight position={[-10, -10, -5]} intensity={0.5} color="#aaaaaa" />
 
-      <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
+      {isFixedScroll && (
+        <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
+      )}
       
       {isFixedScroll ? (
         <>
@@ -173,11 +175,13 @@ export default function SceneContainer({ isFixedScroll = false }: { isFixedScrol
         <OracleCore />
       )}
 
-      <EffectComposer disableNormalPass>
-        <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} intensity={1.5} />
-        <Noise opacity={0.15} />
-        <Vignette eskil={false} offset={0.1} darkness={1.1} />
-      </EffectComposer>
+      {isFixedScroll && (
+        <EffectComposer disableNormalPass>
+          <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} intensity={1.5} />
+          <Noise opacity={0.15} />
+          <Vignette eskil={false} offset={0.1} darkness={1.1} />
+        </EffectComposer>
+      )}
     </Canvas>
   );
 }

@@ -52,11 +52,20 @@ function preprocessInputs(inputs: PredictionInput): Float32Array {
   return processed;
 }
 
+let isRunning = false;
+
 export async function predict(inputs: PredictionInput): Promise<{ probability: number; prediction: number }> {
   if (!session) {
     // Fallback: use a simple logistic regression approximation
     return fallbackPredict(inputs);
   }
+
+  if (isRunning) {
+    // Prevent ONNX WASM crash from concurrent session.run() calls during rapid slider dragging
+    return fallbackPredict(inputs);
+  }
+
+  isRunning = true;
 
   try {
     const processed = preprocessInputs(inputs);
@@ -92,6 +101,8 @@ export async function predict(inputs: PredictionInput): Promise<{ probability: n
   } catch (error) {
     console.error('[DEVPULSE] Inference error:', error);
     return fallbackPredict(inputs);
+  } finally {
+    isRunning = false;
   }
 }
 

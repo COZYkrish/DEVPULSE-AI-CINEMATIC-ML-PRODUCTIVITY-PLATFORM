@@ -1,4 +1,4 @@
-import { useState, useCallback, Suspense, useRef } from 'react';
+import { useState, useCallback, Suspense, useRef, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Brain, Zap, ArrowUpDown, Lightbulb, Activity, SlidersHorizontal } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
@@ -39,7 +39,7 @@ function WaterfallChart() {
   }));
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer width="100%" height="100%" minHeight={1} minWidth={1}>
       <BarChart data={data} layout="vertical" margin={{ left: 90 }}>
         <CartesianGrid strokeDasharray="1 4" stroke="rgba(255,255,255,0.05)" horizontal={false} />
         <XAxis type="number" stroke="#888888" tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} />
@@ -79,7 +79,7 @@ function WhatIfSimulator() {
   }, []);
 
   // Init on first render
-  useState(() => { initBase(); });
+  useEffect(() => { initBase(); }, [initBase]);
 
   const handleChange = (key: keyof PredictionInput, val: number) => {
     const newInputs = { ...inputs, [key]: val };

@@ -208,11 +208,11 @@ export default function ModelArenaPage() {
                   <BarChart3 className="w-5 h-5 text-white" /> Performance Radar
                 </h3>
                 <div className="h-80 relative z-10">
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height="100%" minHeight={1} minWidth={1}>
                     <RadarChart data={radarData}>
                       <PolarGrid stroke="rgba(255,255,255,0.2)" />
                       <PolarAngleAxis dataKey="metric" tick={{ fontSize: 10, fill: '#888888', fontFamily: 'JetBrains Mono' }} />
-                      <PolarRadiusAxis tick={{ fontSize: 10, fill: '#555555' }} domain={[0.6, 1]} />
+                      <PolarRadiusAxis tick={{ fontSize: 10, fill: '#555555' }} domain={[0.6, 1]} tickCount={5} />
                       {models.map((m) => (
                         <Radar key={m.name} name={m.name} dataKey={m.name} stroke={m.color} fill={m.color} fillOpacity={m.isBest ? 0.3 : 0.1} strokeWidth={m.isBest ? 2 : 1} />
                       ))}
@@ -230,7 +230,7 @@ export default function ModelArenaPage() {
                   <Trophy className="w-5 h-5 text-white" /> Leaderboard
                 </h3>
                 <div className="h-80 relative z-10">
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height="100%" minHeight={1} minWidth={1}>
                     <BarChart data={comparisonData}>
                       <CartesianGrid strokeDasharray="1 4" stroke="rgba(255,255,255,0.1)" />
                       <XAxis dataKey="name" stroke="#888888" tick={{ fontSize: 10, fontFamily: 'JetBrains Mono' }} />

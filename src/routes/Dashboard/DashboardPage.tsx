@@ -380,7 +380,7 @@ export default function DashboardPage() {
                       <Tooltip 
                         contentStyle={{ backgroundColor: '#000', border: '1px solid rgba(255,255,255,0.2)' }}
                         itemStyle={{ color: '#fff', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}
-                        formatter={(value: number) => [`${value.toFixed(0)}%`, 'Intensity']}
+                        formatter={(value: any) => [`${Number(value).toFixed(0)}%`, 'Intensity']}
                       />
                     </RadarChart>
                   </ResponsiveContainer>

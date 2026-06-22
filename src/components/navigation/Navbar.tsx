@@ -40,8 +40,7 @@ export default function Navbar() {
             to="/"
             className="w-12 h-12 rounded-full liquid-glass pointer-events-auto flex items-center justify-center text-white transition-transform hover:scale-105"
           >
-            {/* @ts-ignore */}
-            <iconify-icon icon="solar:box-minimalistic-linear" width="24" height="24"></iconify-icon>
+            <img src="/favicon.png" alt="DevPulse Logo" className="w-6 h-6 object-contain" />
           </Link>
 
           {/* Center: Liquid Glass Pill */}

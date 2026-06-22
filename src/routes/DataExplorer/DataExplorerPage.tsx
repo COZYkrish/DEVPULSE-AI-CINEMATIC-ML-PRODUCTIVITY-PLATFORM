@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Database, Search, Filter, ArrowUpDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Database, Search, Filter, ArrowUpDown, ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import Papa from 'papaparse';
 import PageTransition from '@/components/animations/PageTransition';
 import Waves from '@/components/animations/Waves';
@@ -84,6 +84,21 @@ export default function DataExplorerPage() {
     if (sortKey === key) setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
     else { setSortKey(key); setSortDir('desc'); }
     setPage(0);
+  };
+
+  const exportCSV = () => {
+    if (filtered.length === 0) return;
+    const csvRows = [columns.join(',')];
+    filtered.forEach(row => {
+      csvRows.push(columns.map(c => row[c]).join(','));
+    });
+    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'devpulse_dataset_filtered.csv';
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -170,6 +185,10 @@ export default function DataExplorerPage() {
               <span className="text-[10px] uppercase tracking-widest border border-white/20 bg-black/60 px-4 py-2" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>
                 {filtered.length} RECORDS
               </span>
+              <button onClick={exportCSV} className="flex items-center gap-2 px-4 py-2 border border-white/20 text-[10px] uppercase tracking-widest hover:bg-white/10 transition-colors ml-auto"
+                style={{ color: '#FFFFFF', fontFamily: 'JetBrains Mono' }}>
+                <Download className="w-3.5 h-3.5" /> Export CSV
+              </button>
             </div>
           </RevealSection>
 

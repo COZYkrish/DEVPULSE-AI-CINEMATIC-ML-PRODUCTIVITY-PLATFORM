@@ -3,6 +3,7 @@ import { motion, useInView } from 'framer-motion';
 import { BarChart3, TrendingUp, Layers, PieChart, Brain, Moon, Code2, Activity } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, AreaChart, Area } from 'recharts';
 import PageTransition from '@/components/animations/PageTransition';
+import Waves from '@/components/animations/Waves';
 import SceneContainer from '@/components/3d/SceneContainer';
 
 /* ============================================ */
@@ -141,10 +142,25 @@ export default function AnalyticsPage() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
-        <div className="vignette-overlay" />
-        <div className="noise-overlay" />
-        <div className="film-lines" />
+      <div className="relative min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-40 mix-blend-screen">
+          <Waves
+            lineColor="rgba(255, 255, 255, 0.15)"
+            backgroundColor="transparent"
+            waveSpeedX={0.02}
+            waveSpeedY={0.01}
+            waveAmpX={40}
+            waveAmpY={20}
+            friction={0.9}
+            tension={0.01}
+            maxCursorMove={120}
+            xGap={12}
+            yGap={36}
+          />
+        </div>
+        <div className="vignette-overlay relative z-0 pointer-events-none" />
+        <div className="noise-overlay relative z-0 pointer-events-none" />
+        <div className="film-lines relative z-0 pointer-events-none" />
         <div className="container relative z-10">
           
           {/* Hero */}

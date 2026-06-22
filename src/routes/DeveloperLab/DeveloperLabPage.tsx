@@ -5,6 +5,7 @@ import { predict } from '@/lib/onnx/onnxEngine';
 import { computeBurnoutRisk } from '@/lib/ml/predictionUtils';
 import type { PredictionInput } from '@/lib/constants';
 import PageTransition from '@/components/animations/PageTransition';
+import Waves from '@/components/animations/Waves';
 
 function RevealSection({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   const ref = useRef(null);
@@ -126,10 +127,25 @@ export default function DeveloperLabPage() {
 
   return (
     <PageTransition>
-      <div className="min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
-        <div className="vignette-overlay" />
-        <div className="noise-overlay" />
-        <div className="film-lines" />
+      <div className="relative min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-40 mix-blend-screen">
+          <Waves
+            lineColor="rgba(255, 255, 255, 0.15)"
+            backgroundColor="transparent"
+            waveSpeedX={0.02}
+            waveSpeedY={0.01}
+            waveAmpX={40}
+            waveAmpY={20}
+            friction={0.9}
+            tension={0.01}
+            maxCursorMove={120}
+            xGap={12}
+            yGap={36}
+          />
+        </div>
+        <div className="vignette-overlay relative z-0 pointer-events-none" />
+        <div className="noise-overlay relative z-0 pointer-events-none" />
+        <div className="film-lines relative z-0 pointer-events-none" />
         
         <div className="container relative z-10">
           {/* Header */}

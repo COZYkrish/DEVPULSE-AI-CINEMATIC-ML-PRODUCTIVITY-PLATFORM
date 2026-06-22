@@ -215,10 +215,14 @@ export default function DeveloperLabPage() {
 
             {/* Habit Impact Simulator */}
             <RevealSection delay={0.5}>
-              <LabTool icon={TrendingUp} title="Habit Simulator" description="Simulate baseline performance" color="#FFFFFF">
+              <LabTool icon={TrendingUp} title="Habit Analyzer" description="Real-time ML performance inference" color="#FFFFFF">
                 <div className="text-center my-6">
                   {habitResult !== null ? (
                     <>
+                      <p className="text-white/60 mb-6 font-light" style={{ fontFamily: 'Barlow, sans-serif' }}>
+                        Tweak parameters manually to observe how the ONNX model responds in real-time.
+                        This allows you to test the decision boundaries of the active machine learning engine.
+                      </p>
                       <div className="text-4xl font-light mb-2" style={{ fontFamily: 'JetBrains Mono', color: monochromeScale(habitResult * 100) }}>
                         {(habitResult * 100).toFixed(1)}%
                       </div>
@@ -227,7 +231,7 @@ export default function DeveloperLabPage() {
                   ) : (
                     <button onClick={runHabit} className="px-6 py-3 border border-white bg-white text-black text-[10px] uppercase tracking-widest font-bold hover:bg-black hover:text-white transition-colors"
                       style={{ fontFamily: 'JetBrains Mono' }}>
-                      <Zap className="w-3 h-3 inline mr-2" /> Run Simulation
+                      <Zap className="w-3 h-3 inline mr-2" /> Run Inference
                     </button>
                   )}
                 </div>

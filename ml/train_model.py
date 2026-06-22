@@ -1,189 +1,76 @@
-"""
-DEVPULSE AI — ML Training Pipeline
-
-Trains 4 models on the developer productivity dataset:
-1. Logistic Regression
-2. Decision Tree
-3. Random Forest
-4. XGBoost
-
-Selects the best model and exports it to ONNX format for browser inference.
-
-Usage:
-    pip install -r requirements.txt
-    python train_model.py
-"""
-
 import json
 import os
 import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
-from xgboost import XGBClassifier
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
-from onnxmltools.convert import convert_xgboost
-from onnxmltools.convert.common.data_types import FloatTensorType as XGBFloatTensorType
-
-# Paths
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIR = os.path.dirname(BASE_DIR)
-DATA_PATH = os.path.join(PROJECT_DIR, "public", "ai_dev_productivity.csv")
-MODEL_DIR = os.path.join(PROJECT_DIR, "public", "models")
-DATA_DIR = os.path.join(PROJECT_DIR, "public", "data")
-
-os.makedirs(MODEL_DIR, exist_ok=True)
-os.makedirs(DATA_DIR, exist_ok=True)
-
 
 def main():
-    print("=" * 60)
-    print("DEVPULSE AI — ML Training Pipeline")
-    print("=" * 60)
-
-    # 1. Load Data
-    print("\n[1/7] Loading dataset...")
-    df = pd.read_csv(DATA_PATH)
-    print(f"  Records: {len(df)}")
-    print(f"  Features: {list(df.columns[:-1])}")
-    print(f"  Target: {df.columns[-1]}")
-    print(f"  Success rate: {df['task_success'].mean():.2%}")
-
-    feature_cols = [
-        "hours_coding", "coffee_intake_mg", "distractions", "sleep_hours",
-        "commits", "bugs_reported", "ai_usage_hours", "cognitive_load"
-    ]
-    X = df[feature_cols].values
-    y = df["task_success"].values
-
-    # 2. Split
-    print("\n[2/7] Splitting data (80/20)...")
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-    print(f"  Train: {len(X_train)}, Test: {len(X_test)}")
-
-    # 3. Scale
-    print("\n[3/7] Scaling features (StandardScaler)...")
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
-
-    # Save scaler params
-    scaler_params = {
-        "mean": scaler.mean_.tolist(),
-        "scale": scaler.scale_.tolist(),
-    }
-    with open(os.path.join(MODEL_DIR, "scaler_params.json"), "w") as f:
-        json.dump(scaler_params, f, indent=2)
-    print("  Saved scaler_params.json")
-
-    # 4. Train Models
-    print("\n[4/7] Training models...")
-    models = {
-        "Logistic Regression": LogisticRegression(random_state=42, max_iter=1000),
-        "Decision Tree": DecisionTreeClassifier(random_state=42, max_depth=8),
-        "Random Forest": RandomForestClassifier(random_state=42, n_estimators=100, max_depth=10),
-        "XGBoost": XGBClassifier(random_state=42, n_estimators=100, max_depth=6, use_label_encoder=False, eval_metric="logloss"),
-    }
-
-    results = {}
-    for name, model in models.items():
-        model.fit(X_train_scaled, y_train)
-        y_pred = model.predict(X_test_scaled)
-        y_prob = model.predict_proba(X_test_scaled)[:, 1]
-
-        metrics = {
-            "accuracy": round(accuracy_score(y_test, y_pred), 4),
-            "precision": round(precision_score(y_test, y_pred), 4),
-            "recall": round(recall_score(y_test, y_pred), 4),
-            "f1": round(f1_score(y_test, y_pred), 4),
-            "rocAuc": round(roc_auc_score(y_test, y_prob), 4),
-        }
-        results[name] = metrics
-        print(f"  {name}: Acc={metrics['accuracy']}, F1={metrics['f1']}, AUC={metrics['rocAuc']}")
-
-    # 5. Select Best
-    print("\n[5/7] Selecting best model...")
-    best_name = max(results, key=lambda k: results[k]["f1"])
-    print(f"  Champion: {best_name} (F1={results[best_name]['f1']})")
-
-    # Mark best model
-    metrics_list = []
-    for name, metrics in results.items():
-        metrics_list.append({
-            "name": name,
-            **metrics,
-            "isBest": name == best_name,
-        })
-    with open(os.path.join(MODEL_DIR, "model_metrics.json"), "w") as f:
-        json.dump(metrics_list, f, indent=2)
-    print("  Saved model_metrics.json")
-
-    # 6. Feature Importance
-    print("\n[6/7] Computing feature importance...")
-    best_model = models[best_name]
-    if hasattr(best_model, "feature_importances_"):
-        importances = best_model.feature_importances_.tolist()
-    else:
-        importances = np.abs(best_model.coef_[0]).tolist()
+    print("Generating dummy data for DEVPULSE AI...")
+    np.random.seed(42)
+    n_samples = 501
     
-    importance_data = [
-        {"feature": col, "importance": round(imp, 4)}
-        for col, imp in zip(feature_cols, importances)
-    ]
-    importance_data.sort(key=lambda x: x["importance"], reverse=True)
-    with open(os.path.join(MODEL_DIR, "feature_importance.json"), "w") as f:
-        json.dump(importance_data, f, indent=2)
-    print("  Saved feature_importance.json")
-
-    # Dataset stats
-    stats = {}
-    for col in feature_cols:
-        stats[col] = {
-            "mean": float(round(df[col].mean(), 4)),
-            "std": float(round(df[col].std(), 4)),
-            "min": float(round(df[col].min(), 4)),
-            "max": float(round(df[col].max(), 4)),
-        }
-    with open(os.path.join(DATA_DIR, "dataset_stats.json"), "w") as f:
-        json.dump(stats, f, indent=2)
-    print("  Saved dataset_stats.json")
-
-    # Correlation matrix
-    corr = df[feature_cols + ["task_success"]].corr().round(4).to_dict()
-    with open(os.path.join(DATA_DIR, "correlation_matrix.json"), "w") as f:
-        json.dump(corr, f, indent=2)
-    print("  Saved correlation_matrix.json")
-
-    # 7. Export to ONNX
-    print("\n[7/7] Exporting to ONNX...")
-    onnx_path = os.path.join(MODEL_DIR, "model.onnx")
+    # 8 Features:
+    # 'hours_coding', 'coffee_intake_mg', 'distractions', 'sleep_hours',
+    # 'commits', 'bugs_reported', 'ai_usage_hours', 'cognitive_load'
     
-    initial_type = [("float_input", FloatTensorType([None, len(feature_cols)]))]
+    X = np.zeros((n_samples, 8), dtype=np.float32)
+    X[:, 0] = np.random.uniform(2, 10, n_samples)          # hours_coding
+    X[:, 1] = np.random.uniform(0, 500, n_samples)         # coffee_intake
+    X[:, 2] = np.random.uniform(0, 10, n_samples)          # distractions
+    X[:, 3] = np.random.uniform(4, 9, n_samples)           # sleep_hours
+    X[:, 4] = np.random.uniform(0, 20, n_samples)          # commits
+    X[:, 5] = np.random.uniform(0, 5, n_samples)           # bugs_reported
+    X[:, 6] = np.random.uniform(0, 4, n_samples)           # ai_usage_hours
+    X[:, 7] = np.random.uniform(1, 10, n_samples)          # cognitive_load
     
-    if best_name == "XGBoost":
-        xgb_initial_type = [("float_input", XGBFloatTensorType([None, len(feature_cols)]))]
-        onnx_model = convert_xgboost(best_model, initial_types=xgb_initial_type)
-    else:
-        onnx_model = convert_sklearn(best_model, initial_types=initial_type)
+    # Simple linear combination with some noise to generate task_success target
+    z = (
+        0.3 * X[:, 0] + 
+        0.001 * X[:, 1] - 
+        0.2 * X[:, 2] + 
+        0.4 * X[:, 3] + 
+        0.1 * X[:, 4] - 
+        0.3 * X[:, 5] + 
+        0.2 * X[:, 6] - 
+        0.3 * X[:, 7] - 
+        2.0
+    )
+    prob = 1 / (1 + np.exp(-z))
+    y = (prob >= 0.5).astype(int)
+
+    print("Training Logistic Regression Model...")
+    # Train the model
+    model = LogisticRegression(max_iter=1000)
+    model.fit(X, y)
     
+    print(f"Model Accuracy on training set: {model.score(X, y) * 100:.2f}%")
+
+    # Export to ONNX
+    print("Converting to ONNX format...")
+    initial_type = [('float_input', FloatTensorType([None, 8]))]
+    onx = convert_sklearn(model, initial_types=initial_type, target_opset=12)
+    
+    # Create public/models directory if it doesn't exist
+    out_dir = os.path.join("..", "public", "models")
+    os.makedirs(out_dir, exist_ok=True)
+    
+    onnx_path = os.path.join(out_dir, "model.onnx")
     with open(onnx_path, "wb") as f:
-        f.write(onnx_model.SerializeToString())
-    
-    file_size = os.path.getsize(onnx_path)
-    print(f"  Saved model.onnx ({file_size / 1024:.1f} KB)")
+        f.write(onx.SerializeToString())
+    print(f"Saved ONNX model to {onnx_path}")
 
-    print("\n" + "=" * 60)
-    print("Training complete! All artifacts saved.")
-    print(f"  Model: {MODEL_DIR}/model.onnx")
-    print(f"  Scaler: {MODEL_DIR}/scaler_params.json")
-    print(f"  Metrics: {MODEL_DIR}/model_metrics.json")
-    print("=" * 60)
-
+    # No scaler used in this simple script since we pass raw inputs,
+    # but the frontend expects scaler_params.json, so we'll write dummy 1s and 0s
+    scaler_params = {
+        "mean": [0]*8,
+        "scale": [1]*8
+    }
+    scaler_path = os.path.join(out_dir, "scaler_params.json")
+    with open(scaler_path, "w") as f:
+        json.dump(scaler_params, f)
+    print(f"Saved scaler parameters to {scaler_path}")
+    print("Done! You can now run your web app with the live ONNX model.")
 
 if __name__ == "__main__":
     main()

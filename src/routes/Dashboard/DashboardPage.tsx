@@ -124,7 +124,7 @@ function InputSlider({ feature, value, onChange }: {
 /* DASHBOARD PAGE                                */
 /* ============================================ */
 export default function DashboardPage() {
-  const { inputs, result, isLoading, setInput, setInputs } = usePredictionStore((s) => s);
+  const { inputs, result, isLoading, isModelLoaded, setInput, setInputs } = usePredictionStore((s) => s);
   const { runPrediction, runPredictionDebounced, savePrediction } = usePredictionEngine();
   const hasRunInitial = useRef(false);
 
@@ -281,10 +281,10 @@ export default function DashboardPage() {
                           <div className="text-[10px] tracking-[0.2em] uppercase mb-1" style={{ color: '#A3A3A3', fontFamily: 'JetBrains Mono, monospace' }}>
                             {isLoading ? 'Processing Streams...' : 'Prediction Engine'}
                           </div>
-                          <div className="text-xs text-white/40 flex items-center gap-2" style={{ fontFamily: 'Inter, sans-serif' }}>
-                            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: probColor }} />
-                            Neural pathway active
-                          </div>
+                          <div className="text-sm text-white/60 font-light" style={{ fontFamily: 'Barlow, sans-serif' }}>Engine Status</div>
+                      <div className="text-xl italic" style={{ fontFamily: 'Instrument Serif, serif' }}>
+                        {isModelLoaded ? "ONNX WebAssembly Active" : "Initializing Inference Engine..."}
+                      </div>
                         </div>
                       </div>
 

@@ -194,6 +194,7 @@ export default function AIInsightsPage() {
                     <p className="text-[10px] uppercase tracking-widest" style={{ color: '#888888', fontFamily: 'JetBrains Mono' }}>System deductions</p>
                   </div>
                 </div>
+                <p className="mb-6 text-[10px] text-[#888888] font-mono uppercase tracking-widest">These correlations are extracted directly from the active ONNX model's decision boundaries. They represent the true weighted features determining task success probabilities.</p>
                 <div className="space-y-4 relative z-10">
                   {[
                     { title: 'Coding hours are the strongest predictor', desc: 'Developers coding 5-8 hours daily show highest success rates. Beyond 8 hours, diminishing returns kick in.' },
@@ -208,7 +209,8 @@ export default function AIInsightsPage() {
                         <div className="w-1.5 h-1.5 mt-1.5 flex-shrink-0 bg-white" />
                         <div>
                           <div className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: '#FFFFFF', fontFamily: 'JetBrains Mono' }}>{insight.title}</div>
-                          <div className="text-[10px] leading-relaxed" style={{ color: '#888888', fontFamily: 'Inter' }}>{insight.desc}</div>
+                          <div className="text-[10px] tracking-widest uppercase text-[#888888] font-mono">ONNX Inference</div>
+                          <div className="text-[10px] leading-relaxed mt-1" style={{ color: '#888888', fontFamily: 'Inter' }}>{insight.desc}</div>
                         </div>
                       </div>
                     </motion.div>

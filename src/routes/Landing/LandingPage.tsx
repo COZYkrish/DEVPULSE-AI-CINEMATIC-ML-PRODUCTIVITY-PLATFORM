@@ -4,6 +4,7 @@ import { motion, useInView } from 'framer-motion';
 import { Code2, Moon, GitCommit, Activity } from 'lucide-react';
 import SceneContainer from '@/components/3d/SceneContainer';
 import HlsVideo from '@/components/ui/HlsVideo';
+import FadingVideo from '@/components/ui/FadingVideo';
 import BlurText from '@/components/animations/BlurText';
 import ShapeBlur from '@/components/animations/ShapeBlur';
 import 'iconify-icon';
@@ -106,48 +107,53 @@ export default function LandingPage() {
       {/* ============================================ */}
       {/* SCENE 1 — THE VOID (HERO)                    */}
       {/* ============================================ */}
-      <section className="relative h-[100vh] flex flex-col items-center justify-center overflow-hidden">
+      <section className="relative min-h-screen flex flex-col overflow-hidden bg-black">
         {/* Background Video */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <HlsVideo src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-b from-transparent to-black" />
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <video 
+            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_115001_bcdaa3b4-03de-47e7-ad63-ae3e392c32d4.mp4" 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            className="absolute inset-0 w-full h-full object-cover" 
+          />
+          <div className="absolute bottom-0 left-0 right-0 h-[400px] bg-gradient-to-b from-transparent to-black/80" />
         </div>
 
-        <div className="container relative z-10 text-center flex flex-col items-center">
-          <SectionReveal delay={0.2}>
-            <div className="liquid-glass rounded-full px-4 py-1.5 mb-8 flex items-center gap-2">
-              <span className="bg-white text-black text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">New</span>
-              <span className="text-sm font-light text-white/80" style={{ fontFamily: 'Barlow, sans-serif' }}>System Initialization</span>
-            </div>
-          </SectionReveal>
+        <div className="container relative z-10 w-full flex-1 flex flex-col justify-between pt-12 pb-24 px-6">
+          {/* Top Left: Title */}
+          <div className="flex flex-col items-start text-left max-w-3xl mt-48">
+            <BlurText 
+              text="Predict Developer Productivity"
+              className="text-6xl sm:text-[6.5rem] leading-[1.0] tracking-tight italic drop-shadow-xl"
+              delay={0.4}
+              style={{ fontFamily: 'Instrument Serif, serif' }}
+            />
+          </div>
 
-          <BlurText 
-            text="Predict Developer Productivity"
-            className="text-6xl sm:text-[6.5rem] leading-[1.1] mb-6 tracking-tight italic"
-            delay={0.4}
-            style={{ fontFamily: 'Instrument Serif, serif' }}
-          />
+          {/* Bottom Right: Description & Actions */}
+          <div className="flex flex-col items-start lg:items-end text-left lg:text-right max-w-lg lg:self-end mt-16 lg:mt-0">
+            <SectionReveal delay={0.8}>
+              <p className="text-lg sm:text-xl mb-8 text-white/90 font-light drop-shadow-lg" style={{ fontFamily: 'Barlow, sans-serif' }}>
+                Understand success patterns. Optimize performance. Make data-driven decisions 
+                with raw machine learning running directly in your browser.
+              </p>
+            </SectionReveal>
 
-          <SectionReveal delay={0.8}>
-            <p className="text-lg sm:text-xl max-w-2xl mx-auto mb-12 text-white/60 font-light" style={{ fontFamily: 'Barlow, sans-serif' }}>
-              Understand success patterns. Optimize performance. Make data-driven decisions 
-              with raw machine learning running directly in your browser.
-            </p>
-          </SectionReveal>
-
-          <SectionReveal delay={1.0}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/dashboard" className="flex items-center gap-2 px-8 py-4 bg-white text-black rounded-full font-medium text-lg hover:scale-105 transition-transform" style={{ fontFamily: 'Barlow, sans-serif' }}>
-                Launch System
-                {/* @ts-ignore */}
-                <iconify-icon icon="lucide:arrow-up-right" width="20" height="20"></iconify-icon>
-              </Link>
-              <Link to="/analytics" className="liquid-glass-strong rounded-full flex items-center gap-2 px-8 py-4 text-white font-medium text-lg hover:scale-105 transition-transform" style={{ fontFamily: 'Barlow, sans-serif' }}>
-                Explore Data
-              </Link>
-            </div>
-          </SectionReveal>
+            <SectionReveal delay={1.0}>
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <Link to="/dashboard" className="flex items-center gap-2 px-8 py-4 bg-white text-black rounded-full font-medium text-lg hover:scale-105 transition-transform shadow-lg" style={{ fontFamily: 'Barlow, sans-serif' }}>
+                  Launch System
+                  {/* @ts-ignore */}
+                  <iconify-icon icon="lucide:arrow-up-right" width="20" height="20"></iconify-icon>
+                </Link>
+                <Link to="/analytics" className="liquid-glass-strong rounded-full flex items-center gap-2 px-8 py-4 text-white font-medium text-lg hover:scale-105 transition-transform" style={{ fontFamily: 'Barlow, sans-serif' }}>
+                  Explore Data
+                </Link>
+              </div>
+            </SectionReveal>
+          </div>
         </div>
       </section>
 

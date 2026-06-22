@@ -147,24 +147,22 @@ export default function SceneContainer({ isFixedScroll = false }: { isFixedScrol
   return (
     <Canvas
       camera={{ position: [0, 0, 5], fov: 60 }}
-      dpr={[1, 2]}
-      gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping }}
+      dpr={[1, 1.5]} // Reduced max DPR for better performance
+      gl={{ antialias: false, alpha: true, toneMapping: THREE.ACESFilmicToneMapping, powerPreference: 'high-performance' }}
       style={{ position: isFixedScroll ? 'fixed' : 'absolute', inset: 0, pointerEvents: 'none', zIndex: -1 }}
     >
-      <color attach="background" args={['#000000']} />
-      
       <ambientLight intensity={0.5} />
       <directionalLight position={[10, 10, 5]} intensity={2} color="#ffffff" />
       <directionalLight position={[-10, -10, -5]} intensity={0.5} color="#aaaaaa" />
 
       {isFixedScroll && (
-        <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
+        <Stars radius={100} depth={50} count={1500} factor={4} saturation={0} fade speed={0.5} />
       )}
       
       {isFixedScroll ? (
         <>
           <ScrollCamera />
-          <HeroObject />
+          {/* HeroObject removed because it is hidden by the full-screen background video */}
           <ArchitectStructure />
           <NexusGalaxy />
           <OracleCore />
@@ -173,14 +171,6 @@ export default function SceneContainer({ isFixedScroll = false }: { isFixedScrol
       ) : (
         // For minimal scenes like dashboard
         <OracleCore />
-      )}
-
-      {isFixedScroll && (
-        <EffectComposer>
-          <Bloom luminanceThreshold={0.5} luminanceSmoothing={0.9} intensity={1.5} />
-          <Noise opacity={0.15} />
-          <Vignette eskil={false} offset={0.1} darkness={1.1} />
-        </EffectComposer>
       )}
     </Canvas>
   );

@@ -252,16 +252,75 @@ export default function DashboardPage() {
                 <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/50 m-2" />
                 
                 {/* Overlay status */}
-                <div className="absolute bottom-4 left-4 right-4">
-                  <div className="border border-white/10 bg-black/60 backdrop-blur-md p-3 text-center">
-                    <div className="text-[10px] tracking-widest uppercase mb-1" style={{ color: '#888888', fontFamily: 'JetBrains Mono, monospace' }}>
-                      {isLoading ? 'PROCESSING...' : 'PREDICTION ENGINE'}
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8, duration: 0.6 }}
+                  className="absolute bottom-6 left-6 right-6"
+                >
+                  <div className="liquid-glass-strong p-6 overflow-hidden rounded-xl group hover:glow-primary transition-all duration-500">
+                    {/* Animated background effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 -translate-x-[100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out" />
+                    
+                    <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="relative flex items-center justify-center w-12 h-12 rounded-full border border-white/20 bg-black/50 overflow-hidden">
+                          {isLoading ? (
+                            <motion.div
+                              animate={{ rotate: 360 }}
+                              transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+                            >
+                              <Activity className="w-5 h-5 text-white/50" />
+                            </motion.div>
+                          ) : (
+                            <Brain className="w-5 h-5 text-white relative z-10" style={{ color: probColor }} />
+                          )}
+                          <div className="absolute inset-0 rounded-full animate-pulse-glow opacity-50" style={{ boxShadow: `inset 0 0 15px ${probColor}40` }} />
+                        </div>
+                        <div>
+                          <div className="text-[10px] tracking-[0.2em] uppercase mb-1" style={{ color: '#A3A3A3', fontFamily: 'JetBrains Mono, monospace' }}>
+                            {isLoading ? 'Processing Streams...' : 'Prediction Engine'}
+                          </div>
+                          <div className="text-xs text-white/40 flex items-center gap-2" style={{ fontFamily: 'Inter, sans-serif' }}>
+                            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: probColor }} />
+                            Neural pathway active
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-left sm:text-right">
+                        <div className="flex items-baseline sm:justify-end gap-1">
+                          <motion.div 
+                            key={prob}
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="text-4xl font-light tracking-tighter drop-shadow-lg" 
+                            style={{ fontFamily: 'Space Grotesk, sans-serif', color: probColor }}
+                          >
+                            {(prob * 100).toFixed(1)}
+                          </motion.div>
+                          <span className="text-lg text-white/50" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>%</span>
+                        </div>
+                        <div className="text-[9px] uppercase tracking-[0.2em] text-white/30 mt-1" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                          Confidence Interval
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-2xl font-light" style={{ fontFamily: 'JetBrains Mono, monospace', color: probColor }}>
-                      {(prob * 100).toFixed(1)}%
+                    
+                    {/* Status Bar */}
+                    <div className="mt-5 h-[2px] w-full bg-white/10 rounded-full overflow-hidden relative">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={{ width: `${prob * 100}%` }}
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                        className="absolute top-0 left-0 h-full relative"
+                        style={{ backgroundColor: probColor }}
+                      >
+                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/50 to-white animate-[marquee_2s_linear_infinite]" />
+                      </motion.div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               </div>
 
               {/* Action Buttons */}

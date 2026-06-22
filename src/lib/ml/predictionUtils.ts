@@ -136,6 +136,68 @@ export function generateRecommendations(inputs: PredictionInput, probability: nu
     });
   }
 
+  // --- Positive Reinforcements ---
+  
+  if (inputs.sleep_hours >= 7.5) {
+    recs.push({
+      title: 'Optimal Rest Pattern',
+      description: `Logging ${inputs.sleep_hours}h of sleep strongly correlates with lower error rates and enhanced abstract problem-solving today.`,
+      icon: 'Moon',
+      priority: 'low',
+      category: 'sleep',
+    });
+  }
+
+  if (inputs.distractions <= 2) {
+    recs.push({
+      title: 'Deep Work Flow',
+      description: 'Minimal interruptions detected. This continuous focus state drastically reduces cognitive switching penalties.',
+      icon: 'Shield',
+      priority: 'low',
+      category: 'focus',
+    });
+  }
+
+  if (inputs.ai_usage_hours >= 1.5) {
+    recs.push({
+      title: 'AI Multiplier Active',
+      description: 'High utilization of AI tooling is accelerating your baseline coding speed while minimizing boilerplate fatigue.',
+      icon: 'Sparkles',
+      priority: 'low',
+      category: 'ai',
+    });
+  }
+
+  if (inputs.coffee_intake_mg > 0 && inputs.coffee_intake_mg <= 300) {
+    recs.push({
+      title: 'Caffeine Sweet-Spot',
+      description: 'Your caffeine intake is optimally balanced to provide alertness without triggering anxiety or late-day crashes.',
+      icon: 'Coffee',
+      priority: 'low',
+      category: 'health',
+    });
+  }
+
+  if (inputs.bugs_reported === 0 && inputs.commits > 0) {
+    recs.push({
+      title: 'Clean Code Streak',
+      description: 'Zero bugs reported alongside active commits indicates exceptional code quality and thorough review practices.',
+      icon: 'CheckCircle',
+      priority: 'low',
+      category: 'workflow',
+    });
+  }
+
+  if (inputs.hours_coding >= 4 && inputs.hours_coding <= 7) {
+    recs.push({
+      title: 'Sustainable Rhythm',
+      description: 'Your daily coding volume is in the goldilocks zone—enough for massive progress, short enough to avoid burnout.',
+      icon: 'Activity',
+      priority: 'low',
+      category: 'health',
+    });
+  }
+
   if (probability > 0.8 && recs.length === 0) {
     recs.push({
       title: 'Great Performance!',

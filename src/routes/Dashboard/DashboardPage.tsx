@@ -7,6 +7,7 @@ import { FEATURES, PRESETS } from '@/lib/constants';
 import type { PredictionInput } from '@/lib/constants';
 import SceneContainer from '@/components/3d/SceneContainer';
 import PageTransition from '@/components/animations/PageTransition';
+import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string, style?: React.CSSProperties }>> = {
   Code2, Coffee, Bell, Moon, GitCommit, Bug, Brain, Activity,
@@ -163,6 +164,16 @@ export default function DashboardPage() {
   // Monochromatic scale: White for high prob, dark gray for low.
   const probColor = prob >= 0.7 ? '#FFFFFF' : prob >= 0.4 ? '#AAAAAA' : '#555555';
 
+  const radarData = FEATURES.map((f) => {
+    const val = inputs[f.key];
+    const normalized = Math.max(0, Math.min(100, ((val - f.min) / (f.max - f.min)) * 100));
+    return {
+      feature: f.label.split(' ')[0], // Keep label short for the chart
+      value: normalized,
+      fullMark: 100,
+    };
+  });
+
   return (
     <PageTransition>
       <div className="min-h-screen pt-24 pb-32 overflow-hidden bg-black text-white">
@@ -281,10 +292,10 @@ export default function DashboardPage() {
                           <div className="text-[10px] tracking-[0.2em] uppercase mb-1" style={{ color: '#A3A3A3', fontFamily: 'JetBrains Mono, monospace' }}>
                             {isLoading ? 'Processing Streams...' : 'Prediction Engine'}
                           </div>
-                          <div className="text-sm text-white/60 font-light" style={{ fontFamily: 'Barlow, sans-serif' }}>Engine Status</div>
-                      <div className="text-xl italic" style={{ fontFamily: 'Instrument Serif, serif' }}>
-                        {isModelLoaded ? "ONNX WebAssembly Active" : "Initializing Inference Engine..."}
-                      </div>
+                          <div className="text-xs text-white/40 flex items-center gap-2" style={{ fontFamily: 'Inter, sans-serif' }}>
+                            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: probColor }} />
+                            {isModelLoaded ? "ONNX WebAssembly Active" : "Initializing Inference Engine..."}
+                          </div>
                         </div>
                       </div>
 
@@ -347,6 +358,34 @@ export default function DashboardPage() {
                 >
                   <RotateCcw className="w-3 h-3" /> Reset
                 </button>
+              </div>
+
+              {/* Radar Chart (Feature Balance Matrix) */}
+              <div className="border border-white/20 bg-black p-6 flex-1 flex flex-col min-h-[300px]">
+                <h3 className="text-[10px] uppercase tracking-widest mb-4 flex items-center gap-2 text-gray-400" style={{ fontFamily: 'JetBrains Mono, monospace' }}>
+                  <Activity className="w-3 h-3 text-white" />
+                  Feature Balance Matrix
+                </h3>
+                <div className="flex-1 w-full relative">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                      <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                      <PolarAngleAxis dataKey="feature" tick={{ fill: '#888888', fontSize: 10, fontFamily: 'JetBrains Mono, monospace' }} />
+                      <Radar
+                        name="Input Vector"
+                        dataKey="value"
+                        stroke={probColor}
+                        fill={probColor}
+                        fillOpacity={0.2}
+                      />
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#000', border: '1px solid rgba(255,255,255,0.2)' }}
+                        itemStyle={{ color: '#fff', fontSize: '12px', fontFamily: 'JetBrains Mono, monospace' }}
+                        formatter={(value: number) => [`${value.toFixed(0)}%`, 'Intensity']}
+                      />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </div>
               </div>
             </motion.div>
 

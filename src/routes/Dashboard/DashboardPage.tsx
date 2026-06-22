@@ -1,5 +1,5 @@
-import { useEffect, useCallback, Suspense, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useCallback, Suspense, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Save, RotateCcw, TrendingUp, AlertTriangle, CheckCircle, XCircle, Shield, Brain, Moon, Coffee, Code2, GitCommit, Bug, Activity, Bell, BellOff, Sparkles, GitBranch, Trophy } from 'lucide-react';
 import { usePredictionStore } from '@/store/predictionStore';
 import { usePredictionEngine } from '@/hooks/usePredictionEngine';
@@ -129,6 +129,7 @@ export default function DashboardPage() {
   const { inputs, result, isLoading, isModelLoaded, setInput, setInputs } = usePredictionStore((s) => s);
   const { runPrediction, runPredictionDebounced, savePrediction } = usePredictionEngine();
   const hasRunInitial = useRef(false);
+  const [showExecuteToast, setShowExecuteToast] = useState(false);
 
   // Run initial prediction
   useEffect(() => {
@@ -336,7 +337,11 @@ export default function DashboardPage() {
               {/* Action Buttons */}
               <div className="grid grid-cols-3 gap-2">
                 <button
-                  onClick={() => runPrediction()}
+                  onClick={() => {
+                    runPrediction();
+                    setShowExecuteToast(true);
+                    setTimeout(() => setShowExecuteToast(false), 2000);
+                  }}
                   className="flex items-center justify-center gap-2 p-3 border border-white bg-white text-black text-[10px] uppercase tracking-widest font-bold hover:bg-transparent hover:text-white transition-colors"
                   style={{ fontFamily: 'JetBrains Mono, monospace' }}
                 >
@@ -490,6 +495,28 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Execute Toast Notification */}
+      <AnimatePresence>
+        {showExecuteToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="fixed bottom-8 right-8 z-50 flex items-center gap-4 bg-black/90 border border-white/20 p-4 shadow-[0_0_30px_rgba(255,255,255,0.1)] backdrop-blur-md"
+          >
+            <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center relative overflow-hidden">
+              <Zap className="w-4 h-4 text-white relative z-10" />
+              <div className="absolute inset-0 bg-white/20 animate-pulse" />
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-widest text-white/50" style={{ fontFamily: 'JetBrains Mono, monospace' }}>System Status</div>
+              <div className="text-sm uppercase tracking-widest text-white font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Inference Complete</div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </PageTransition>
   );
 }

@@ -130,6 +130,7 @@ export default function DashboardPage() {
   const { runPrediction, runPredictionDebounced, savePrediction } = usePredictionEngine();
   const hasRunInitial = useRef(false);
   const [showExecuteToast, setShowExecuteToast] = useState(false);
+  const [showLogToast, setShowLogToast] = useState(false);
 
   // Run initial prediction
   useEffect(() => {
@@ -348,7 +349,11 @@ export default function DashboardPage() {
                   <Zap className="w-3 h-3" /> Execute
                 </button>
                 <button
-                  onClick={handleSave}
+                  onClick={() => {
+                    handleSave();
+                    setShowLogToast(true);
+                    setTimeout(() => setShowLogToast(false), 2000);
+                  }}
                   disabled={!result}
                   className="flex items-center justify-center gap-2 p-3 border border-white/20 text-[10px] uppercase tracking-widest hover:bg-white/10 transition-colors disabled:opacity-40"
                   style={{ fontFamily: 'JetBrains Mono, monospace' }}
@@ -513,6 +518,26 @@ export default function DashboardPage() {
             <div>
               <div className="text-[10px] uppercase tracking-widest text-white/50" style={{ fontFamily: 'JetBrains Mono, monospace' }}>System Status</div>
               <div className="text-sm uppercase tracking-widest text-white font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Inference Complete</div>
+            </div>
+          </motion.div>
+        )}
+        
+        {/* Log Toast Notification */}
+        {showLogToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="fixed bottom-8 right-8 z-50 flex items-center gap-4 bg-black/90 border border-white/20 p-4 shadow-[0_0_30px_rgba(255,255,255,0.1)] backdrop-blur-md"
+          >
+            <div className="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center relative overflow-hidden">
+              <Save className="w-4 h-4 text-white relative z-10" />
+              <div className="absolute inset-0 bg-white/20 animate-pulse" />
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-widest text-white/50" style={{ fontFamily: 'JetBrains Mono, monospace' }}>System Status</div>
+              <div className="text-sm uppercase tracking-widest text-white font-bold" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Prediction Logged</div>
             </div>
           </motion.div>
         )}

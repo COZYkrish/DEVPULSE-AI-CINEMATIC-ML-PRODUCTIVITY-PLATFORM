@@ -5,10 +5,10 @@
   <p><strong>Predict Developer Productivity. Understand Success. Optimize Performance.</strong></p>
 
   <p>
-    <a href="https://github.com/your-username/devpulse-ai/stargazers"><img src="https://img.shields.io/github/stars/your-username/devpulse-ai?style=for-the-badge&color=00E5FF" alt="Stars" /></a>
-    <a href="https://github.com/your-username/devpulse-ai/network/members"><img src="https://img.shields.io/github/forks/your-username/devpulse-ai?style=for-the-badge&color=7C3AED" alt="Forks" /></a>
-    <a href="https://github.com/your-username/devpulse-ai/issues"><img src="https://img.shields.io/github/issues/your-username/devpulse-ai?style=for-the-badge&color=22D3EE" alt="Issues" /></a>
-    <a href="https://github.com/your-username/devpulse-ai/blob/main/LICENSE"><img src="https://img.shields.io/github/license/your-username/devpulse-ai?style=for-the-badge&color=10B981" alt="License" /></a>
+    <a href="https://github.com/COZYkrish/DEVPULSE-AI-CINEMATIC-ML-PRODUCTIVITY-PLATFORM/stargazers"><img src="https://img.shields.io/github/stars/COZYkrish/DEVPULSE-AI-CINEMATIC-ML-PRODUCTIVITY-PLATFORM?style=for-the-badge&color=00E5FF" alt="Stars" /></a>
+    <a href="https://github.com/COZYkrish/DEVPULSE-AI-CINEMATIC-ML-PRODUCTIVITY-PLATFORM/network/members"><img src="https://img.shields.io/github/forks/COZYkrish/DEVPULSE-AI-CINEMATIC-ML-PRODUCTIVITY-PLATFORM?style=for-the-badge&color=7C3AED" alt="Forks" /></a>
+    <a href="https://github.com/COZYkrish/DEVPULSE-AI-CINEMATIC-ML-PRODUCTIVITY-PLATFORM/issues"><img src="https://img.shields.io/github/issues/COZYkrish/DEVPULSE-AI-CINEMATIC-ML-PRODUCTIVITY-PLATFORM?style=for-the-badge&color=22D3EE" alt="Issues" /></a>
+    <a href="https://github.com/COZYkrish/DEVPULSE-AI-CINEMATIC-ML-PRODUCTIVITY-PLATFORM/blob/main/LICENSE"><img src="https://img.shields.io/github/license/COZYkrish/DEVPULSE-AI-CINEMATIC-ML-PRODUCTIVITY-PLATFORM?style=for-the-badge&color=10B981" alt="License" /></a>
   </p>
 </div>
 
@@ -291,7 +291,7 @@ To run this project locally, you'll need [Node.js](https://nodejs.org/) installe
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/devpulse-ai.git
+   git clone https://github.com/COZYkrish/DEVPULSE-AI-CINEMATIC-ML-PRODUCTIVITY-PLATFORM.git
    cd devpulse-ai
    ```
 
